@@ -57,9 +57,8 @@ public class Application {
     CommandLineRunner test(JdbcTemplate jdbcTemplate) {
         return args ->
                 jdbcTemplate.query("select * from RESERVATION",
-                    (RowCallbackHandler) (ResultSet resultSet) ->
-                        System.out.println(String.format("found reservation for %s, %s",
-                            resultSet.getString("LAST_NAME"), resultSet.getString("FIRST_NAME"))));
+                        (RowCallbackHandler) (ResultSet rs) ->
+                                System.out.println(String.format("found reservation for %s, %s", rs.getString("LAST_NAME"), rs.getString("FIRST_NAME"))));
 
     }
 

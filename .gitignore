@@ -1,1 +1,7 @@
 spring-cloud-samples
+*.iml
+.gitignore~
+*.ipr
+*.iws
+target
+.idea
