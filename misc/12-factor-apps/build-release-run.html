@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The Twelve-Factor App</title>
+  <meta name="description" content="A methodology for building modern, scalable, maintainable software-as-a-service apps.">
+  <meta name="author" content="Adam Wiggins">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="/css/screen.css" media="screen">
+  <link rel="stylesheet" href="/css/mobile.css" media="screen">
+
+  <script type="text/javascript" src="http://use.typekit.com/rsq7tro.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  
+  <!-- Google Tag Manager -->
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-JD26"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-JD26');</script>
+  <!-- End Google Tag Manager -->
+  
+
+  <header>
+    <h1><a href="/" title="The Twelve-Factor App">The Twelve-Factor App</a></h1>
+  </header>
+
+  <section class="abstract" id="factor">
+  <article>
+    <h2 id='v_build_release_run'>V. Build, release, run</h2>
+
+<h3 id='strictly_separate_build_and_run_stages'>Strictly separate build and run stages</h3>
+
+<p>A <a href='/codebase'>codebase</a> is transformed into a (non-development) deploy through three stages:</p>
+
+<ul>
+<li>The <em>build stage</em> is a transform which converts a code repo into an executable bundle known as a <em>build</em>. Using a version of the code at a commit specified by the deployment process, the build stage fetches and vendors <a href='/dependencies'>dependencies</a> and compiles binaries and assets.</li>
+
+<li>The <em>release stage</em> takes the build produced by the build stage and combines it with the deploy&#8217;s current <a href='/config'>config</a>. The resulting <em>release</em> contains both the build and the config and is ready for immediate execution in the execution environment.</li>
+
+<li>The <em>run stage</em> (also known as &#8220;runtime&#8221;) runs the app in the execution environment, by launching some set of the app&#8217;s <a href='/processes'>processes</a> against a selected release.</li>
+</ul>
+
+<p><img alt='Code becomes a build, which is combined with config to create a release.' src='/images/release.png' /></p>
+
+<p><strong>The twelve-factor app uses strict separation between the build, release, and run stages.</strong> For example, it is impossible to make changes to the code at runtime, since there is no way to propagate those changes back to the build stage.</p>
+
+<p>Deployment tools typically offer release management tools, most notably the ability to roll back to a previous release. For example, the <a href='https://github.com/capistrano/capistrano/wiki'>Capistrano</a> deployment tool stores releases in a subdirectory named <code>releases</code>, where the current release is a symlink to the current release directory. Its <code>rollback</code> command makes it easy to quickly roll back to a previous release.</p>
+
+<p>Every release should always have a unique release ID, such as a timestamp of the release (such as <code>2011-04-06-20:32:17</code>) or an incrementing number (such as <code>v100</code>). Releases are an append-only ledger and a release cannot be mutated once it is created. Any change must create a new release.</p>
+
+<p>Builds are initiated by the app&#8217;s developers whenever new code is deployed. Runtime execution, by contrast, can happen automatically in cases such as a server reboot, or a crashed process being restarted by the process manager. Therefore, the run stage should be kept to as few moving parts as possible, since problems that prevent an app from running can cause it to break in the middle of the night when no developers are on hand. The build stage can be more complex, since errors are always in the foreground for a developer who is driving the deploy.</p>
+  </article>
+</section>
+
+<section class="concrete">
+  <nav>
+    <div id="prev"><a href="/backing-services">&laquo; Previous</a></div>
+    <div id="next"><a href="/processes">Next &raquo;</a></div>
+  </nav>
+</section>
+
+
+  <footer>
+  <span>Written by Adam Wiggins</span>
+  <span>Last updated Jan 30, 2012</span>
+  <span><a href="https://github.com/heroku/12factor">Sourcecode</a></span>
+  <span><a href="/12factor.epub">Download ePub Book</a></span>
+  <span><a href="https://www.heroku.com/policy/privacy">Privacy Policy</a></span>
+</footer>
+</body>
+</html>

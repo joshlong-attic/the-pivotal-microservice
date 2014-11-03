@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The Twelve-Factor App</title>
+  <meta name="description" content="A methodology for building modern, scalable, maintainable software-as-a-service apps.">
+  <meta name="author" content="Adam Wiggins">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="/css/screen.css" media="screen">
+  <link rel="stylesheet" href="/css/mobile.css" media="screen">
+
+  <script type="text/javascript" src="http://use.typekit.com/rsq7tro.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  
+  <!-- Google Tag Manager -->
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-JD26"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-JD26');</script>
+  <!-- End Google Tag Manager -->
+  
+
+  <header>
+    <h1><a href="/" title="The Twelve-Factor App">The Twelve-Factor App</a></h1>
+  </header>
+
+  <section class="abstract" id="factor">
+  <article>
+    <h2 id='ii_dependencies'>II. Dependencies</h2>
+
+<h3 id='explicitly_declare_and_isolate_dependencies'>Explicitly declare and isolate dependencies</h3>
+
+<p>Most programming languages offer a packaging system for distributing support libraries, such as <a href='http://www.cpan.org/'>CPAN</a> for Perl or <a href='http://rubygems.org/'>Rubygems</a> for Ruby. Libraries installed through a packaging system can be installed system-wide (known as &#8220;site packages&#8221;) or scoped into the directory containing the app (known as &#8220;vendoring&#8221; or &#8220;bundling&#8221;).</p>
+
+<p><strong>A twelve-factor app never relies on implicit existence of system-wide packages.</strong> It declares all dependencies, completely and exactly, via a <em>dependency declaration</em> manifest. Furthermore, it uses a <em>dependency isolation</em> tool during execution to ensure that no implicit dependencies &#8220;leak in&#8221; from the surrounding system. The full and explicit dependency specification is applied uniformly to both production and development.</p>
+
+<p>For example, <a href='http://gembundler.com/'>Gem Bundler</a> for Ruby offers the <code>Gemfile</code> manifest format for dependency declaration and <code>bundle exec</code> for dependency isolation. In Python there are two separate tools for these steps &#8211; <a href='http://www.pip-installer.org/en/latest/'>Pip</a> is used for declaration and <a href='http://www.virtualenv.org/en/latest/'>Virtualenv</a> for isolation. Even C has <a href='http://www.gnu.org/s/autoconf/'>Autoconf</a> for dependency declaration, and static linking can provide dependency isolation. No matter what the toolchain, dependency declaration and isolation must always be used together &#8211; only one or the other is not sufficient to satisfy twelve-factor.</p>
+
+<p>One benefit of explicit dependency declaration is that it simplifies setup for developers new to the app. The new developer can check out the app&#8217;s codebase onto their development machine, requiring only the language runtime and dependency manager installed as prerequisites. They will be able to set up everything needed to run the app&#8217;s code with a deterministic <em>build command</em>. For example, the build command for Ruby/Bundler is <code>bundle install</code>, while for Clojure/<a href='https://github.com/technomancy/leiningen#readme'>Leiningen</a> it is <code>lein deps</code>.</p>
+
+<p>Twelve-factor apps also do not rely on the implicit existence of any system tools. Examples include shelling out to ImageMagick or <code>curl</code>. While these tools may exist on many or even most systems, there is no guarantee that they will exist on all systems where the app may run in the future, or whether the version found on a future system will be compatible with the app. If the app needs to shell out to a system tool, that tool should be vendored into the app.</p>
+  </article>
+</section>
+
+<section class="concrete">
+  <nav>
+    <div id="prev"><a href="/codebase">&laquo; Previous</a></div>
+    <div id="next"><a href="/config">Next &raquo;</a></div>
+  </nav>
+</section>
+
+
+  <footer>
+  <span>Written by Adam Wiggins</span>
+  <span>Last updated Jan 30, 2012</span>
+  <span><a href="https://github.com/heroku/12factor">Sourcecode</a></span>
+  <span><a href="/12factor.epub">Download ePub Book</a></span>
+  <span><a href="https://www.heroku.com/policy/privacy">Privacy Policy</a></span>
+</footer>
+</body>
+</html>
