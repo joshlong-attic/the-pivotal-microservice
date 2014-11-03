@@ -24,7 +24,7 @@ import java.util.Collection;
 @EnableAutoConfiguration
 @RestController
 public class Application {
-    
+
     @Bean
     @Profile({"dev", "default"})
     DataSource dev() {
@@ -64,24 +64,13 @@ class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
+        return "Reservation{firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' + '}';
     }
 
     public Reservation(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 }
 

@@ -43,7 +43,7 @@ Enough organizations had to _discover_ these patterns before we - as a community
 
 ## A Pivotal Microservice is Agile
 
-Today's applications need to be _agile_. As the markets move quickly, so too must boardroom directon translate into value in production. It's almost cliche to bandy around the term _agile_ today, but that's because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are *not* using _waterfall_! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.
+Today's applications need to be _agile_. As the markets move quickly, so too must boardroom direction translate into value in production. It's almost cliche to bandy around the term _agile_ today, but that's because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are *not* using _waterfall_! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.
 
 ### A Microservice Should be Singly-Focused
 // lamda architecture lets u compose bigger solutions out of smaller ones. think of the unix pipes & filters model.
@@ -71,41 +71,42 @@ Today's applications need to be _agile_. As the markets move quickly, so too mus
 // ----------------------------------------------------------
 ## A Pivotal Microservice is Portable
 
-A microservice should  be _portable_. Portability affects various layers of the microservice.
+A microservice should  be _portable_. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
 
-A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
+### Open services like PostgreSQL, MongoDB, Redis, Hadoop
 
-An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.  
+An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
 
 Configuration about network attached backing services is exposed in a unform way on {CF}, through process environment variables (like `VCAP_SERVICES`). Applications written to run on {CF} benefit from this uniform, easily-reproduced interface for service configuration.
 
+
+[source,text]
+----
+include::{code-root}portable/src/main/resources/application.properties[]
+----
+.this file - `application.properties` - will be loaded when the Spring Boot application starts up. 
+
+
 Spring Boot and Spring Cloud makes it even easier to work with this configuration by normalizing configuration coming from external variables, property (or `.yml`) files, Java `-D` arguments, etc.
 
-// example code demonstrating configuration that runs in PCF || 127.0.0.1 safely
+### Spring makes it easy to stay platform agnostic
 
 Spring, fundamentally, is an inversion-of-control container. Inversion-of-control makes it easy to write objects that are ignorant of _where_ a collaborating object came from. A bean may have a reference to a `javax.sql.DataSource` , but it doesn't know whether that `javax.sql.DataSouce` was provided as a mock in a unit test, whether it was bound to JNDI or whether it was resolved by the Cloud Foundry `VCAP_SERVICES` environment variable. Spring makes it easy to tag environment-specific bean configuration using _profiles_. Here's an example:
 
-
 [source,java]
 ----
-include::{code-root}/portable/src/main/java/demo/Application.java[]
+include::{code-root}portable/src/main/java/demo/Application.java[]
 ----
-// TODO add a guardfile that bulds asciidoctor so i can see this render!!
+
+The Spring Cloud project provides PaaS connectors that make this sort of indirection a snap to setup on Cloud Foundry or Heroku, letting you write PaaS agnostic code if you don't want to pursue that same indirection through configuration properties. Because of this flexibility, Spring applications can even be made to run on legacy environments like IBM WebSphere, Oracle WebLogic or JBoss WildFly. Now _that's_ portable!
+
+### CloudFoundry is an Open PaaS
 Applications that run on Cloud Foundry are, of course, not required to stay on Cloud Foundry. You might start your application on Pivotal's hosted, public, Cloud Foundry-based Pivotal Web Services, then decide to move things in-house on your own Cloud Foundry installation using Pivotal Cloud Foundry. Don't want to use either? Use any of the many Cloud Foundry-based services and products provided by ecosystem partners, like IBM's BlueMix. And, assuming you've exposed service configuratino as environment variables, there's no reason you couldn't run the application unchanged on another PaaS altogether.
 
 
 
-A microservice running on Cloud Foundry
- - does the microservice run on developer's local machine and the production machine with parity?
- - does the application itself run on many platforms? Can a microservice, for example, be made to run on
-
 // portable (env vars, written to a higher level stack like posix, cf, etc., uses common open technologies wherever possible)
-### CF for PaaS independence
-// use CF for PaaS independeance ; it's open-source, multi distro. Run on PCF or PWS. Or anywhere else. Or in-datacenter. or, since its basically an assembly of open components, ...
-### Open services like PostgreSQL, MongoDB, Redis, Hadoop
-// dont get locked into proprietary components (a la Google App Engine!) (i think this is also a 12f ref point as well)
-### Spring makes it easy to stay platform agnostic
-// and finally, use Spring and its IoC to make ur code as platform-agnostic as possible. (paas connectors, but even just configuration works too)
+
 
 ## A Pivotal Microservice is Configurable
 // reference the varous 12f points re: condfiguration

@@ -46,9 +46,9 @@
 </li>
 <li><a href="#_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</a>
 <ul class="sectlevel2">
-<li><a href="#_cf_for_paas_independence">4.1. CF for PaaS independence</a></li>
-<li><a href="#_open_services_like_postgresql_mongodb_redis_hadoop">4.2. Open services like PostgreSQL, MongoDB, Redis, Hadoop</a></li>
-<li><a href="#_spring_makes_it_easy_to_stay_platform_agnostic">4.3. Spring makes it easy to stay platform agnostic</a></li>
+<li><a href="#_open_services_like_postgresql_mongodb_redis_hadoop">4.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</a></li>
+<li><a href="#_spring_makes_it_easy_to_stay_platform_agnostic">4.2. Spring makes it easy to stay platform agnostic</a></li>
+<li><a href="#_cloudfoundry_is_an_open_paas">4.3. CloudFoundry is an Open PaaS</a></li>
 </ul>
 </li>
 <li><a href="#_a_pivotal_microservice_is_configurable">5. A Pivotal Microservice is Configurable</a>
@@ -141,7 +141,7 @@
 <h2 id="_a_pivotal_microservice_is_agile">2. A Pivotal Microservice is Agile</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Today&#8217;s applications need to be <em>agile</em>. As the markets move quickly, so too must boardroom directon translate into value in production. It&#8217;s almost cliche to bandy around the term <em>agile</em> today, but that&#8217;s because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are <strong>not</strong> using <em>waterfall</em>! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.</p>
+<p>Today&#8217;s applications need to be <em>agile</em>. As the markets move quickly, so too must boardroom direction translate into value in production. It&#8217;s almost cliche to bandy around the term <em>agile</em> today, but that&#8217;s because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are <strong>not</strong> using <em>waterfall</em>! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.</p>
 </div>
 <div class="sect2">
 <h3 id="_a_microservice_should_be_singly_focused">2.1. A Microservice Should be Singly-Focused</h3>
@@ -178,20 +178,30 @@
 <h2 id="_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A microservice should  be <em>portable</em>. Portability affects various layers of the microservice.</p>
+<p>A microservice should  be <em>portable</em>. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer&#8217;s local machine <em>and</em> the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  <a href="http://12factor.net/dev-prod-parity">12-Factor manifesto&#8217;s page on development and production parity</a>. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the <em>agile</em> nature of a Pivotal microservice.</p>
 </div>
-<div class="paragraph">
-<p>A microservice should ideally run on both a developer&#8217;s local machine <em>and</em> the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  <a href="http://12factor.net/dev-prod-parity">12-Factor manifesto&#8217;s page on development and production parity</a>. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the <em>agile</em> nature of a Pivotal microservice.</p>
-</div>
+<div class="sect2">
+<h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">4.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
 <div class="paragraph">
 <p>An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon&#8217;s SQS or Google App Engine&#8217;s task queue.</p>
 </div>
 <div class="paragraph">
 <p>Configuration about network attached backing services is exposed in a unform way on Cloud Foundry, through process environment variables (like <code>VCAP_SERVICES</code>). Applications written to run on Cloud Foundry benefit from this uniform, easily-reproduced interface for service configuration.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-text" data-lang="text">server.port ${vcap.application.port:8080}
+
+postgres.uri ${vcap.services.pivotal-ms-pgsql.credentials.uri}</code></pre>
+</div>
+</div>
 <div class="paragraph">
+<div class="title">this file - <code>application.properties</code> - will be loaded when the Spring Boot application starts up.</div>
 <p>Spring Boot and Spring Cloud makes it even easier to work with this configuration by normalizing configuration coming from external variables, property (or <code>.yml</code>) files, Java <code>-D</code> arguments, etc.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_spring_makes_it_easy_to_stay_platform_agnostic">4.2. Spring makes it easy to stay platform agnostic</h3>
 <div class="paragraph">
 <p>Spring, fundamentally, is an inversion-of-control container. Inversion-of-control makes it easy to write objects that are ignorant of <em>where</em> a collaborating object came from. A bean may have a reference to a <code>javax.sql.DataSource</code> , but it doesn&#8217;t know whether that <code>javax.sql.DataSouce</code> was provided as a mock in a unit test, whether it was bound to JNDI or whether it was resolved by the Cloud Foundry <code>VCAP_SERVICES</code> environment variable. Spring makes it easy to tag environment-specific bean configuration using <em>profiles</em>. Here&#8217;s an example:</p>
 </div>
@@ -218,17 +228,11 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.util.Collection;
 
-/**
- * TODO move this to Cloud Foundry! (no wifi onplane..)
- */
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
 @RestController
 public class Application {
-
-    @Autowired
-    private JdbcTemplate template;
 
     @Bean
     @Profile({"dev", "default"})
@@ -253,12 +257,10 @@ public class Application {
                 org.postgresql.Driver.class.newInstance(), url, user, pw);
     }
 
-
     @Bean
     JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
-
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -271,26 +273,14 @@ class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
+        return "Reservation{firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' + '}';
     }
 
     public Reservation(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-
-    public String getFirstName() {
-
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
 }
 
 @RestController
@@ -309,24 +299,14 @@ class ReservationsRestController {
 </div>
 </div>
 <div class="paragraph">
+<p>The Spring Cloud project provides PaaS connectors that make this sort of indirection a snap to setup on Cloud Foundry or Heroku, letting you write PaaS agnostic code if you don&#8217;t want to pursue that same indirection through configuration properties. Because of this flexibility, Spring applications can even be made to run on legacy environments like IBM WebSphere, Oracle WebLogic or JBoss WildFly. Now <em>that&#8217;s</em> portable!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cloudfoundry_is_an_open_paas">4.3. CloudFoundry is an Open PaaS</h3>
+<div class="paragraph">
 <p>Applications that run on Cloud Foundry are, of course, not required to stay on Cloud Foundry. You might start your application on Pivotal&#8217;s hosted, public, Cloud Foundry-based Pivotal Web Services, then decide to move things in-house on your own Cloud Foundry installation using Pivotal Cloud Foundry. Don&#8217;t want to use either? Use any of the many Cloud Foundry-based services and products provided by ecosystem partners, like IBM&#8217;s BlueMix. And, assuming you&#8217;ve exposed service configuratino as environment variables, there&#8217;s no reason you couldn&#8217;t run the application unchanged on another PaaS altogether.</p>
 </div>
-<div class="paragraph">
-<p>A microservice running on Cloud Foundry
- - does the microservice run on developer&#8217;s local machine and the production machine with parity?
- - does the application itself run on many platforms? Can a microservice, for example, be made to run on</p>
-</div>
-<div class="sect2">
-<h3 id="_cf_for_paas_independence">4.1. CF for PaaS independence</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">4.2. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_spring_makes_it_easy_to_stay_platform_agnostic">4.3. Spring makes it easy to stay platform agnostic</h3>
-
 </div>
 </div>
 </div>
@@ -429,7 +409,7 @@ class ReservationsRestController {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-03 15:12:13 CET
+Last updated 2014-11-03 21:34:24 CET
 </div>
 </div>
 </body>
