@@ -199,9 +199,8 @@
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">package demo;
 
-import org.h2.Driver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -209,13 +208,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.Collection;
 
 /**
  * TODO move this to Cloud Foundry! (no wifi onplane..)
@@ -223,7 +226,11 @@ import java.sql.ResultSet;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
+@RestController
 public class Application {
+
+    @Autowired
+    private JdbcTemplate template;
 
     @Bean
     @Profile({"dev", "default"})
@@ -236,35 +243,81 @@ public class Application {
     // export SPRING_PROFILES_ACTIVE=prod then run this
     @Bean
     @Profile("prod")
-    DataSource prod(@Value("${h2.prod.uri}") String url,
-                    @Value("${h2.prod.user}") String user,
-                    @Value("${h2.prod.password}") String pw) {
-        SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
-        simpleDriverDataSource.setDriverClass(Driver.class);
-        simpleDriverDataSource.setUrl(url);
-        simpleDriverDataSource.setUsername(user);
-        simpleDriverDataSource.setPassword(pw);
-        return simpleDriverDataSource;
+    DataSource prod(@Value("${vcap.services.pivotal-ms-pgsql.credentials.uri}") String envUrl)
+            throws IllegalAccessException, InstantiationException,MalformedURLException {
+        URI uri = URI.create(envUrl);
+
+        String host = uri.getHost();
+        int port = uri.getPort();
+        String db = uri.getPath();
+        String userAndPw = uri.getUserInfo();
+        String user = userAndPw.split(":")[0],
+                pw = userAndPw.split(":")[1];
+        String url = String.format(
+                "jdbc:postgresql://%s:%s%s", host, port, db);
+
+        SimpleDriverDataSource driverDataSource = new SimpleDriverDataSource( org.postgresql.Driver.class.newInstance() ,
+                url, user, pw) ;
+
+//        simpleDriverDataSource.setUrl(url );
+
+//        simpleDriverDataSource.setUsername(user);
+//        simpleDriverDataSource.setPassword(pw);
+        return driverDataSource;
     }
+
 
     @Bean
     JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
-    @Bean
-    CommandLineRunner test(JdbcTemplate jdbcTemplate) {
-        return args -&gt;
-                jdbcTemplate.query("select * from RESERVATION",
-                        (RowCallbackHandler) (ResultSet rs) -&gt;
-                                System.out.println(String.format("found reservation for %s, %s", rs.getString("LAST_NAME"), rs.getString("FIRST_NAME"))));
-
-    }
-
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+}
+
+class Reservation {
+
+    private final String firstName, lastName;
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
+
+    public Reservation(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+}
+
+@RestController
+class ReservationsRestController {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @RequestMapping("/reservations")
+    Collection&lt;Reservation&gt; reservations() {
+        return this.jdbcTemplate.query("select * from RESERVATION",
+                (rs, i) -&gt; new Reservation(rs.getString("FIRST_NAME"), rs.getString("LAST_NAME")));
+    }
+
 }</code></pre>
 </div>
 </div>
@@ -389,7 +442,7 @@ public class Application {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-03 14:09:12 CET
+Last updated 2014-11-03 15:09:17 CET
 </div>
 </div>
 </body>

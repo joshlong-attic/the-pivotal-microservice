@@ -1,0 +1,14 @@
+---
+applications:
+- name: portable
+  memory: 512M
+  instances: 1
+  host: portable-${random-word}
+  domain: cfapps.io
+  path: target/portable.jar
+  services:
+    - pivotal-ms-pgsql
+  env:
+    SPRING_PROFILES_ACTIVE: prod
+    DEBUG: "true"
+    debug: "true"
