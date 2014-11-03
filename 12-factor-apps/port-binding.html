@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The Twelve-Factor App</title>
+  <meta name="description" content="A methodology for building modern, scalable, maintainable software-as-a-service apps.">
+  <meta name="author" content="Adam Wiggins">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="/css/screen.css" media="screen">
+  <link rel="stylesheet" href="/css/mobile.css" media="screen">
+
+  <script type="text/javascript" src="http://use.typekit.com/rsq7tro.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  
+  <!-- Google Tag Manager -->
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-JD26"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-JD26');</script>
+  <!-- End Google Tag Manager -->
+  
+
+  <header>
+    <h1><a href="/" title="The Twelve-Factor App">The Twelve-Factor App</a></h1>
+  </header>
+
+  <section class="abstract" id="factor">
+  <article>
+    <h2 id='vii_port_binding'>VII. Port binding</h2>
+
+<h3 id='export_services_via_port_binding'>Export services via port binding</h3>
+
+<p>Web apps are sometimes executed inside a webserver container. For example, PHP apps might run as a module inside <a href='http://httpd.apache.org/'>Apache HTTPD</a>, or Java apps might run inside <a href='http://tomcat.apache.org/'>Tomcat</a>.</p>
+
+<p><strong>The twelve-factor app is completely self-contained</strong> and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service. The web app <strong>exports HTTP as a service by binding to a port</strong>, and listening to requests coming in on that port.</p>
+
+<p>In a local development environment, the developer visits a service URL like <code>http://localhost:5000/</code> to access the service exported by their app. In deployment, a routing layer handles routing requests from a public-facing hostname to the port-bound web processes.</p>
+
+<p>This is typically implemented by using <a href='/dependencies'>dependency declaration</a> to add a webserver library to the app, such as <a href='http://www.tornadoweb.org/'>Tornado</a> for Python, <a href='http://code.macournoyer.com/thin/'>Thin</a> for Ruby, or <a href='http://jetty.codehaus.org/jetty/'>Jetty</a> for Java and other JVM-based languages. This happens entirely in <em>user space</em>, that is, within the app&#8217;s code. The contract with the execution environment is binding to a port to serve requests.</p>
+
+<p>HTTP is not the only service that can be exported by port binding. Nearly any kind of server software can be run via a process binding to a port and awaiting incoming requests. Examples include <a href='http://www.ejabberd.im/'>ejabberd</a> (speaking <a href='http://xmpp.org/'>XMPP</a>), and <a href='http://redis.io/'>Redis</a> (speaking the <a href='http://redis.io/topics/protocol'>Redis protocol</a>).</p>
+
+<p>Note also that the port-binding approach means that one app can become the <a href='/backing-services'>backing service</a> for another app, by providing the URL to the backing app as a resource handle in the <a href='/config'>config</a> for the consuming app.</p>
+  </article>
+</section>
+
+<section class="concrete">
+  <nav>
+    <div id="prev"><a href="/processes">&laquo; Previous</a></div>
+    <div id="next"><a href="/concurrency">Next &raquo;</a></div>
+  </nav>
+</section>
+
+
+  <footer>
+  <span>Written by Adam Wiggins</span>
+  <span>Last updated Jan 30, 2012</span>
+  <span><a href="https://github.com/heroku/12factor">Sourcecode</a></span>
+  <span><a href="/12factor.epub">Download ePub Book</a></span>
+  <span><a href="https://www.heroku.com/policy/privacy">Privacy Policy</a></span>
+</footer>
+</body>
+</html>

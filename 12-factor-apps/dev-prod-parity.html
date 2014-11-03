@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The Twelve-Factor App</title>
+  <meta name="description" content="A methodology for building modern, scalable, maintainable software-as-a-service apps.">
+  <meta name="author" content="Adam Wiggins">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="/css/screen.css" media="screen">
+  <link rel="stylesheet" href="/css/mobile.css" media="screen">
+
+  <script type="text/javascript" src="http://use.typekit.com/rsq7tro.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  
+  <!-- Google Tag Manager -->
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-JD26"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-JD26');</script>
+  <!-- End Google Tag Manager -->
+  
+
+  <header>
+    <h1><a href="/" title="The Twelve-Factor App">The Twelve-Factor App</a></h1>
+  </header>
+
+  <section class="abstract" id="factor">
+  <article>
+    <h2 id='x_devprod_parity'>X. Dev/prod parity</h2>
+
+<h3 id='keep_development_staging_and_production_as_similar_as_possible'>Keep development, staging, and production as similar as possible</h3>
+
+<p>Historically, there have been substantial gaps between development (a developer making live edits to a local <a href='/codebase'>deploy</a> of the app) and production (a running deploy of the app accessed by end users). These gaps manifest in three areas:</p>
+
+<ul>
+<li><strong>The time gap:</strong> A developer may work on code that takes days, weeks, or even months to go into production.</li>
+
+<li><strong>The personnel gap</strong>: Developers write code, ops engineers deploy it.</li>
+
+<li><strong>The tools gap</strong>: Developers may be using a stack like Nginx, SQLite, and OS X, while the production deploy uses Apache, MySQL, and Linux.</li>
+</ul>
+
+<p><strong>The twelve-factor app is designed for <a href='http://www.avc.com/a_vc/2011/02/continuous-deployment.html'>continuous deployment</a> by keeping the gap between development and production small.</strong> Looking at the three gaps described above:</p>
+
+<ul>
+<li>Make the time gap small: a developer may write code and have it deployed hours or even just minutes later.</li>
+
+<li>Make the personnel gap small: developers who wrote code are closely involved in deploying it and watching its behavior in production.</li>
+
+<li>Make the tools gap small: keep development and production as similar as possible.</li>
+</ul>
+
+<p>Summarizing the above into a table:</p>
+<table>
+  <tr>
+    <th />
+    <th>Traditional app</th>
+    <th>Twelve-factor app</th>
+  </tr>
+  <tr>
+    <th>Time between deploys</th>
+    <td>Weeks</td>
+    <td>Hours</td>
+  </tr>
+  <tr>
+    <th>Code authors vs code deployers</th>
+    <td>Different people</td>
+    <td>Same people</td>
+  </tr>
+  <tr>
+    <th>Dev vs production environments</th>
+    <td>Divergent</td>
+    <td>As similar as possible</td>
+  </tr>
+</table>
+<p><a href='/backing-services'>Backing services</a>, such as the app&#8217;s database, queueing system, or cache, is one area where dev/prod parity is important. Many languages offer libraries which simplify access to the backing service, including <em>adapters</em> to different types of services. Some examples are in the table below.</p>
+<table>
+  <tr>
+    <th>Type</th>
+    <th>Language</th>
+    <th>Library</th>
+    <th>Adapters</th>
+  </tr>
+  <tr>
+    <td>Database</td>
+    <td>Ruby/Rails</td>
+    <td>ActiveRecord</td>
+    <td>MySQL, PostgreSQL, SQLite</td>
+  </tr>
+  <tr>
+    <td>Queue</td>
+    <td>Python/Django</td>
+    <td>Celery</td>
+    <td>RabbitMQ, Beanstalkd, Redis</td>
+  </tr>
+  <tr>
+    <td>Cache</td>
+    <td>Ruby/Rails</td>
+    <td>ActiveSupport::Cache</td>
+    <td>Memory, filesystem, Memcached</td>
+  </tr>
+</table>
+<p>Developers sometimes find great appeal in using a lightweight backing service in their local environments, while a more serious and robust backing service will be used in production. For example, using SQLite locally and PostgreSQL in production; or local process memory for caching in development and Memcached in production.</p>
+
+<p><strong>The twelve-factor developer resists the urge to use different backing services between development and production</strong>, even when adapters theoretically abstract away any differences in backing services. Differences between backing services mean that tiny incompatibilities crop up, causing code that worked and passed tests in development or staging to fail in production. These types of errors create friction that disincentivizes continuous deployment. The cost of this friction and the subsequent dampening of continuous deployment is extremely high when considered in aggregate over the lifetime of an application.</p>
+
+<p>Lightweight local services are less compelling than they once were. Modern backing services such as Memcached, PostgreSQL, and RabbitMQ are not difficult to install and run thanks to modern packaging systems, such as <a href='http://mxcl.github.com/homebrew/'>Homebrew</a> and <a href='https://help.ubuntu.com/community/AptGet/Howto'>apt-get</a>. Alternatively, declarative provisioning tools such as <a href='http://www.opscode.com/chef/'>Chef</a> and <a href='http://docs.puppetlabs.com/'>Puppet</a> combined with light-weight virtual environments such as <a href='http://vagrantup.com/'>Vagrant</a> allow developers to run local environments which closely approximate production environments. The cost of installing and using these systems is low compared to the benefit of dev/prod parity and continuous deployment.</p>
+
+<p>Adapters to different backing services are still useful, because they make porting to new backing services relatively painless. But all deploys of the app (developer environments, staging, production) should be using the same type and version of each of the backing services.</p>
+  </article>
+</section>
+
+<section class="concrete">
+  <nav>
+    <div id="prev"><a href="/disposability">&laquo; Previous</a></div>
+    <div id="next"><a href="/logs">Next &raquo;</a></div>
+  </nav>
+</section>
+
+
+  <footer>
+  <span>Written by Adam Wiggins</span>
+  <span>Last updated Jan 30, 2012</span>
+  <span><a href="https://github.com/heroku/12factor">Sourcecode</a></span>
+  <span><a href="/12factor.epub">Download ePub Book</a></span>
+  <span><a href="https://www.heroku.com/policy/privacy">Privacy Policy</a></span>
+</footer>
+</body>
+</html>
