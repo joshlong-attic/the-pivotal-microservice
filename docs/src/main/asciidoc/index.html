@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.1">
+<meta name="author" content="Josh Long">
+<title>The Pivotal Microservice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>The Pivotal Microservice</h1>
+<div class="details">
+<span id="author" class="author">Josh Long</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_how_did_we_get_here">1. How Did We Get Here?</a>
+<ul class="sectlevel2">
+<li><a href="#_scale">1.1. Scale</a></li>
+<li><a href="#_agility">1.2. Agility</a></li>
+<li><a href="#_prometheus_s_microservice">1.3. Prometheus&#8217;s Microservice</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_agile">2. A Pivotal Microservice is Agile</a>
+<ul class="sectlevel2">
+<li><a href="#_a_microservice_should_be_singly_focused">2.1. A Microservice Should be Singly-Focused</a></li>
+<li><a href="#_easy_from_inception_to_production_iteration_is_key">2.2. Easy from Inception to Production; Iteration is key</a></li>
+<li><a href="#_production_ready">2.3. production-ready</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_resilient_to_failure">3. A Pivotal Microservice is Resilient to Failure</a>
+<ul class="sectlevel2">
+<li><a href="#_pcf_heartbeat">3.1. PCF &amp; heartbeat</a></li>
+<li><a href="#_spring_cloud_hystrix">3.2. Spring Cloud &amp; Hystrix</a></li>
+<li><a href="#_service_death_might_just_be_the_platform_helping_u_out">3.3. Service Death Might just be the platform helping u out.</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</a>
+<ul class="sectlevel2">
+<li><a href="#_cf_for_paas_independence">4.1. CF for PaaS independence</a></li>
+<li><a href="#_open_services_like_postgresql_mongodb_redis_hadoop">4.2. Open services like PostgreSQL, MongoDB, Redis, Hadoop</a></li>
+<li><a href="#_spring_makes_it_easy_to_stay_platform_agnostic">4.3. Spring makes it easy to stay platform agnostic</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_configurable">5. A Pivotal Microservice is Configurable</a>
+<ul class="sectlevel2">
+<li><a href="#_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">5.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</a></li>
+<li><a href="#_spring_cloud_config_service">5.2. Spring Cloud config-service.</a></li>
+<li><a href="#_spring_cloud_refreshable_configuration">5.3. Spring Cloud refreshable configuration</a></li>
+<li><a href="#_cf_env_vars">5.4. CF env vars</a></li>
+<li><a href="#_cf_manifests">5.5. CF manifests</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_should_play_well_with_others">6. A Pivotal Microservice Should Play Well with Others</a>
+<ul class="sectlevel2">
+<li><a href="#_spring_cloud_eureka_to_handle_service_discocery">6.1. Spring Cloud Eureka to handle service discocery</a></li>
+<li><a href="#_using_spring_cloud_sso_to_secure_service_to_service_communication">6.2. using Spring Cloud SSO to secure service-to-service communication</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_data_driven">7. A Pivotal Microservice is Data-Driven</a>
+<ul class="sectlevel2">
+<li><a href="#_xd_makes_crunching_and_managing_data_easy">7.1. XD makes crunching and managing data easy</a></li>
+<li><a href="#_built_on_the_shoulders_of_spring_batch_integration">7.2. built on the shoulders of Spring Batch &amp; Integration</a></li>
+<li><a href="#_phd_hawk_are_awesome">7.3. PHD &amp; HAWK are awesome.</a></li>
+</ul>
+</li>
+<li><a href="#_a_pivotal_microservice_is_scalable">8. A Pivotal Microservice is Scalable</a>
+<ul class="sectlevel2">
+<li><a href="#_process_centric_concurrency">8.1. Process -Centric Concurrency</a></li>
+<li><a href="#_basic_pcf_auto_scaling">8.2. Basic PCF Auto-Scaling</a></li>
+<li><a href="#_no_session_state">8.3. no Session State!</a></li>
+</ul>
+</li>
+<li><a href="#_conclusion">9. Conclusion</a></li>
+<li><a href="#_technology_glossary">10. Technology Glossary</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>At Pivotal, we&#8217;re building the best platform for today&#8217;s workloads. One architecture style in particular - <em>microservices</em> - seems to best capture what is typical, and best, in a lot of the applications we&#8217;ve seen deployed on our platform and with our technology.</p>
+</div>
+<div class="paragraph">
+<p>Though our company is new (launched April 2013), we owe our rich heritage to the foundational groups and technologies (Spring, Cloud Foundry, Pivotal Labs, RabbitMQ, Redis, our Apache Tomcat leadership, Greenplum, Gemfire, our Groovy-language leadership, etc.) that launched Pivotal. All of these technologies followed their own trajectories to arrive here, at a time where our customers are building radically different applications  than those of even 10 years ago.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_did_we_get_here">1. How Did We Get Here?</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_scale">1.1. Scale</h3>
+<div class="paragraph">
+<p>The need for scale has changed the dynamics and economics of a modern applications and application architectures. We all know that Moore&#8217;s law - named for Intel founder Gordon Moore - has not really been a law since the early 2000s when it became more cost effective to add more CPUs than to scale an individual CPU on a chip. To do more, applications would need to become more concurrent, to scale out. CSC claims that data-production will be 44000% larger in 2020 than 2009.</p>
+</div>
+<div class="paragraph">
+<p><strong>Mobile technology</strong> brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn&#8217;t exist before. Google&#8217;s Larry Page said in 2012 that  <a href="http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day">Google was seeing 15 million new Android devices activated</a> <em>every day</em>! iPhone activations tend to trend much further behind, but represents a staggering amount in any event, and taken together they represent a platform  that modern application developers would be foolish to ignore.</p>
+</div>
+<div class="paragraph">
+<p>The <strong>Internet-of-Things</strong> is the logical extension of this growth. It is the idea that computing is immersive - a part of the everyday experience. We&#8217;re already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - <a href="http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe">there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices</a>. Of course, IPv6 is a reaction to this growth; after all, if you beleive Cisco, there&#8217;ll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch), too. I won&#8217;t even tell you how many devices I have on my person on a given day!</p>
+</div>
+<div class="paragraph">
+<p><strong>Social platforms</strong> have also driven scale. The diagram below (from 2012) gives a good perspective on the insane scale of most social platforms, like Facebook. Empires (anybody remember Farmville?) have been built and destroyed on the strength of piggybacking on these social platforms alone.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="connected-world-in-60-s.png" alt="connected world in 60 s">
+</div>
+<div class="title">Figure 1. A connected world in 60 seconds</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_agility">1.2. Agility</h3>
+<div class="paragraph">
+<p>It&#8217;s hard to know whether scale begat agility, or the other way around! Either way,  the marketplace <em>pivots</em> (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver <em>seasonal</em> iterations on their flagship software-as-a-service offerings. Millionairre-making software on the Apple App Store or the Google Play Store often has a lifetime of days or weeks. In more stalwart organizations, we&#8217;ve seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that&#8217;s designed solely to support adhoc responses to emergencies? Agility is of course as much about getting shippable code at launch as in subequent iteration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prometheus_s_microservice">1.3. Prometheus&#8217;s Microservice</h3>
+<div class="paragraph">
+<p>It&#8217;s not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it&#8217;s taken this long! It&#8217;s hard to point to any one thing, but here&#8217;s my <em>$0.02</em>: it <em>hasn&#8217;t</em>. You see, microservices aren&#8217;t all that new - the really big players (Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.</p>
+</div>
+<div class="paragraph">
+<p>Enough organizations had to <em>discover</em> these patterns before we - as a community - could distill them out and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let&#8217;s take a look at what makes a  <em>Pivotal microservice</em>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_agile">2. A Pivotal Microservice is Agile</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Today&#8217;s applications need to be <em>agile</em>. As the markets move quickly, so too must boardroom directon translate into value in production. It&#8217;s almost cliche to bandy around the term <em>agile</em> today, but that&#8217;s because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are <strong>not</strong> using <em>waterfall</em>! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.</p>
+</div>
+<div class="sect2">
+<h3 id="_a_microservice_should_be_singly_focused">2.1. A Microservice Should be Singly-Focused</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_easy_from_inception_to_production_iteration_is_key">2.2. Easy from Inception to Production; Iteration is key</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_production_ready">2.3. production-ready</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_resilient_to_failure">3. A Pivotal Microservice is Resilient to Failure</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pcf_heartbeat">3.1. PCF &amp; heartbeat</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_spring_cloud_hystrix">3.2. Spring Cloud &amp; Hystrix</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_service_death_might_just_be_the_platform_helping_u_out">3.3. Service Death Might just be the platform helping u out.</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A microservice should  be <em>portable</em>. Portability affects various layers of the microservice.</p>
+</div>
+<div class="paragraph">
+<p>A microservice should ideally run on both a developer&#8217;s local machine <em>and</em> the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  <a href="http://12factor.net/dev-prod-parity">12-Factor manifesto&#8217;s page on development and production parity</a>. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the <em>agile</em> nature of a Pivotal microservice.</p>
+</div>
+<div class="paragraph">
+<p>An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon&#8217;s SQS or Google App Engine&#8217;s task queue.</p>
+</div>
+<div class="paragraph">
+<p>Configuration about network attached backing services is exposed in a unform way on Cloud Foundry, through process environment variables (like <code>VCAP_SERVICES</code>). Applications written to run on Cloud Foundry benefit from this uniform, easily-reproduced interface for service configuration.</p>
+</div>
+<div class="paragraph">
+<p>Spring Boot and Spring Cloud makes it even easier to work with this configuration by normalizing configuration coming from external variables, property (or <code>.yml</code>) files, Java <code>-D</code> arguments, etc.</p>
+</div>
+<div class="paragraph">
+<p>Spring, fundamentally, is an inversion-of-control container. Inversion-of-control makes it easy to write objects that are ignorant of <em>where</em> a collaborating object came from. A bean may have a reference to a <code>javax.sql.DataSource</code> , but it doesn&#8217;t know whether that <code>javax.sql.DataSouce</code> was provided as a mock in a unit test, whether it was bound to JNDI or whether it was resolved by the Cloud Foundry <code>VCAP_SERVICES</code> environment variable. Spring makes it easy to tag environment-specific bean configuration using <em>profiles</em>. Here&#8217;s an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package demo;
+
+import org.h2.Driver;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+
+/**
+ * TODO move this to Cloud Foundry! (no wifi onplane..)
+ */
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration
+public class Application {
+
+    @Bean
+    @Profile({"dev", "default"})
+    DataSource dev() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
+    }
+
+    // export SPRING_PROFILES_ACTIVE=prod then run this
+    @Bean
+    @Profile("prod")
+    DataSource prod(@Value("${h2.prod.uri}") String url,
+                    @Value("${h2.prod.user}") String user,
+                    @Value("${h2.prod.password}") String pw) {
+        SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+        simpleDriverDataSource.setDriverClass(Driver.class);
+        simpleDriverDataSource.setUrl(url);
+        simpleDriverDataSource.setUsername(user);
+        simpleDriverDataSource.setPassword(pw);
+        return simpleDriverDataSource;
+    }
+
+    @Bean
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    CommandLineRunner test(JdbcTemplate jdbcTemplate) {
+        return args -&gt;
+                jdbcTemplate.query("select * from RESERVATION",
+                        (RowCallbackHandler) (ResultSet rs) -&gt;
+                                System.out.println(String.format("found reservation for %s, %s", rs.getString("LAST_NAME"), rs.getString("FIRST_NAME"))));
+
+    }
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Applications that run on Cloud Foundry are, of course, not required to stay on Cloud Foundry. You might start your application on Pivotal&#8217;s hosted, public, Cloud Foundry-based Pivotal Web Services, then decide to move things in-house on your own Cloud Foundry installation using Pivotal Cloud Foundry. Don&#8217;t want to use either? Use any of the many Cloud Foundry-based services and products provided by ecosystem partners, like IBM&#8217;s BlueMix. And, assuming you&#8217;ve exposed service configuratino as environment variables, there&#8217;s no reason you couldn&#8217;t run the application unchanged on another PaaS altogether.</p>
+</div>
+<div class="paragraph">
+<p>A microservice running on Cloud Foundry
+ - does the microservice run on developer&#8217;s local machine and the production machine with parity?
+ - does the application itself run on many platforms? Can a microservice, for example, be made to run on</p>
+</div>
+<div class="sect2">
+<h3 id="_cf_for_paas_independence">4.1. CF for PaaS independence</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">4.2. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_spring_makes_it_easy_to_stay_platform_agnostic">4.3. Spring makes it easy to stay platform agnostic</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_configurable">5. A Pivotal Microservice is Configurable</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">5.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_spring_cloud_config_service">5.2. Spring Cloud config-service.</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_spring_cloud_refreshable_configuration">5.3. Spring Cloud refreshable configuration</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_cf_env_vars">5.4. CF env vars</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_cf_manifests">5.5. CF manifests</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_should_play_well_with_others">6. A Pivotal Microservice Should Play Well with Others</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_spring_cloud_eureka_to_handle_service_discocery">6.1. Spring Cloud Eureka to handle service discocery</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_using_spring_cloud_sso_to_secure_service_to_service_communication">6.2. using Spring Cloud SSO to secure service-to-service communication</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_data_driven">7. A Pivotal Microservice is Data-Driven</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_xd_makes_crunching_and_managing_data_easy">7.1. XD makes crunching and managing data easy</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_built_on_the_shoulders_of_spring_batch_integration">7.2. built on the shoulders of Spring Batch &amp; Integration</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_phd_hawk_are_awesome">7.3. PHD &amp; HAWK are awesome.</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_scalable">8. A Pivotal Microservice is Scalable</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_process_centric_concurrency">8.1. Process -Centric Concurrency</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_basic_pcf_auto_scaling">8.2. Basic PCF Auto-Scaling</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_no_session_state">8.3. no Session State!</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">9. Conclusion</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_technology_glossary">10. Technology Glossary</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://redis.io"><strong>Redis</strong></a> is an Apache 2 licensed distributed data-structure service that makes it a snap to get cluster-visible collections (like a <code>java.util.Map&lt;K,V&gt;</code> or a <code>java.util.Set&lt;T&gt;</code> or a <code>java.util.List&lt;T</code>). It&#8217;s commonly used for  caching, for example at Twitter.</p>
+</li>
+<li>
+<p><a href="http://rabbitmq.com"><strong>RabbitMQ</strong></a> is an Apache 2 licensed message queue that implements the open AMQP protocol. AMQP was defined by a working group of banks that needed highly available messaging that worked language- and platform-agnostic way. Because it&#8217;s open-source, it works well with other AMQP brokers, though you won&#8217;t often need that support as RabbitMQ is very capable. It provides full HA support,  transactional message production and consumption, and more. It is the most ubiquitous message queue in the cloud, surpassing even Amazon&#8217;s own SQS in AWS deployments. It is used, for example, for the highly available chat system that powers the Huffington Post, and to scale the Indian  national identity service  that serves India&#8217;s 1.2 billion people.</p>
+</li>
+<li>
+<p><a href="http://cloudfoundry.org"><strong>Cloud Foundry</strong></a> is an Apache 2 licensed Platform-as-a-Service that makes it easy to manage applications. It transparently provides services like routing, clustering, service-brokering, and scaling for the developer in a uniform way. It is used, for example, by Baidu, the world&#8217;s 4th largest search engine (or 3rd, if you don&#8217;t count Yahoo! which, after all, is powered by Bing these days).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-11-03 14:09:12 CET
+</div>
+</div>
+</body>
+</html>
