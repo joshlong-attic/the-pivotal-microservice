@@ -19,18 +19,12 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.util.Collection;
 
-/**
- * TODO move this to Cloud Foundry! (no wifi onplane..)
- */
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
 @RestController
 public class Application {
-
-    @Autowired
-    private JdbcTemplate template;
-
+    
     @Bean
     @Profile({"dev", "default"})
     DataSource dev() {
@@ -54,12 +48,10 @@ public class Application {
                 org.postgresql.Driver.class.newInstance(), url, user, pw);
     }
 
-
     @Bean
     JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
-
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -91,7 +83,6 @@ class Reservation {
     public String getLastName() {
         return lastName;
     }
-
 }
 
 @RestController

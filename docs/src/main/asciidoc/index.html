@@ -208,7 +208,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -216,7 +215,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 
@@ -243,27 +241,16 @@ public class Application {
     // export SPRING_PROFILES_ACTIVE=prod then run this
     @Bean
     @Profile("prod")
-    DataSource prod(@Value("${vcap.services.pivotal-ms-pgsql.credentials.uri}") String envUrl)
-            throws IllegalAccessException, InstantiationException,MalformedURLException {
+    DataSource prod(@Value("${vcap.services.pivotal-ms-pgsql.credentials.uri}") String envUrl) throws Exception {
         URI uri = URI.create(envUrl);
-
         String host = uri.getHost();
         int port = uri.getPort();
         String db = uri.getPath();
         String userAndPw = uri.getUserInfo();
-        String user = userAndPw.split(":")[0],
-                pw = userAndPw.split(":")[1];
-        String url = String.format(
-                "jdbc:postgresql://%s:%s%s", host, port, db);
-
-        SimpleDriverDataSource driverDataSource = new SimpleDriverDataSource( org.postgresql.Driver.class.newInstance() ,
-                url, user, pw) ;
-
-//        simpleDriverDataSource.setUrl(url );
-
-//        simpleDriverDataSource.setUsername(user);
-//        simpleDriverDataSource.setPassword(pw);
-        return driverDataSource;
+        String user = userAndPw.split(":")[0], pw = userAndPw.split(":")[1];
+        String url = String.format("jdbc:postgresql://%s:%s%s", host, port, db);
+        return new SimpleDriverDataSource(
+                org.postgresql.Driver.class.newInstance(), url, user, pw);
     }
 
 
@@ -442,7 +429,7 @@ class ReservationsRestController {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-03 15:09:17 CET
+Last updated 2014-11-03 15:12:13 CET
 </div>
 </div>
 </body>

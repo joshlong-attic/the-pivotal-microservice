@@ -75,7 +75,7 @@ A microservice should  be _portable_. Portability affects various layers of the 
 
 A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
 
-An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue. 
+An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.  
 
 Configuration about network attached backing services is exposed in a unform way on {CF}, through process environment variables (like `VCAP_SERVICES`). Applications written to run on {CF} benefit from this uniform, easily-reproduced interface for service configuration.
 
