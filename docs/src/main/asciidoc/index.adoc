@@ -6,8 +6,8 @@ Josh Long
 :toc: left
 :toclevels: 4
 :source-highlighter: prettify
-:images: 
-:code-root: ../
+:images: images/
+:code-root: ../../../
 :snippets-root: snippets
 :12f: http://12factor.net
 
@@ -16,7 +16,7 @@ At Pivotal, we're building the best platform for today's workloads. One architec
 Though our company is new (launched April 2013), we owe our rich heritage to the foundational groups and technologies (Spring, Cloud Foundry, Pivotal Labs, RabbitMQ, Redis, our Apache Tomcat leadership, Greenplum, Gemfire, our Groovy-language leadership, etc.) that launched Pivotal. All of these technologies followed their own trajectories to arrive here, at a time where our customers are building radically different applications  than those of even 10 years ago.
 
 ## How Did We Get Here?
-### Scale
+### Scales
 The need for scale has changed the dynamics and economics of a modern applications and application architectures. We all know that Moore's law - named for Intel founder Gordon Moore - has not really been a law since the early 2000s when it became more cost effective to add more CPUs than to scale an individual CPU on a chip. To do more, applications would need to become more concurrent, to scale out. CSC claims that data-production will be 44000% larger in 2020 than 2009.
 
 **Mobile technology** brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn't exist before. Google's Larry Page said in 2012 that  http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day[Google was seeing 15 million new Android devices activated] _every day_! iPhone activations tend to trend much further behind, but represents a staggering amount in any event, and taken together they represent a platform  that modern application developers would be foolish to ignore.

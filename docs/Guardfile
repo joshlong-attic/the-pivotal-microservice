@@ -4,7 +4,7 @@ require 'asciidoctor'
 require 'erb'
 
 guard 'shell' do
-	watch(/.*\.asc$/) {|m|
+	watch(/.*\.adoc$/) {|m|
 
 
 
