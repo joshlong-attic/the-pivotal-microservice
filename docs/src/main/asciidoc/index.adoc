@@ -110,6 +110,8 @@ Cloud Foundry applications can be configured through the `cf` CLI or through a `
 include::{code-root}hello-world/manifest.yml[]
 ----
 
+Moving the application to production is now as simple as `cf push` in the directory where the `manifest.yml` file lives.
+
 // ----------------------------------------------------------
 ## A Pivotal Microservice is Portable
 
@@ -152,6 +154,7 @@ Applications that run on Cloud Foundry are, of course, not required to stay on C
 
 
 ## A Pivotal Microservice is Configurable
+The {12f}/config[12 Factor applications guidance on configuration] suggests that things that may change between deploys (staging, productino, developer environments, etc.) should be externalzed from the application. Let's distinguish the two types of configuration: application internal configuration and external configuration. Application internal configuration - such as the wiring of the components in the application and the
 
 ### look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)
 ### Spring Cloud config-service.

@@ -277,6 +277,9 @@ applications:
   path: target/hello-world.jar</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Moving the application to production is now as simple as <code>cf push</code> in the directory where the <code>manifest.yml</code> file lives.</p>
+</div>
 </div>
 </div>
 </div>
@@ -420,6 +423,9 @@ class ReservationsRestController {
 <div class="sect1">
 <h2 id="_a_pivotal_microservice_is_configurable">4. A Pivotal Microservice is Configurable</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="http://12factor.net/config">12 Factor applications guidance on configuration</a> suggests that things that may change between deploys (staging, productino, developer environments, etc.) should be externalzed from the application. Let&#8217;s distinguish the two types of configuration: application internal configuration and external configuration. Application internal configuration - such as the wiring of the components in the application and the</p>
+</div>
 <div class="sect2">
 <h3 id="_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">4.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</h3>
 
@@ -533,7 +539,7 @@ class ReservationsRestController {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-10 00:06:59 PST
+Last updated 2014-11-10 00:13:25 PST
 </div>
 </div>
 </body>
