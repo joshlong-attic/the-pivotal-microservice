@@ -42,10 +42,10 @@ public class Application {
         int port = uri.getPort();
         String db = uri.getPath();
         String userAndPw = uri.getUserInfo();
-        String user = userAndPw.split(":")[0], pw = userAndPw.split(":")[1];
+        String user = userAndPw.split(":")[0];
+        String pw = userAndPw.split(":")[1];
         String url = String.format("jdbc:postgresql://%s:%s%s", host, port, db);
-        return new SimpleDriverDataSource(
-                org.postgresql.Driver.class.newInstance(), url, user, pw);
+        return new SimpleDriverDataSource(org.postgresql.Driver.class.newInstance(), url, user, pw);
     }
 
     @Bean

@@ -34,7 +34,7 @@
 <ul class="sectlevel2">
 <li><a href="#_a_microservice_should_be_singly_focused">2.1. A Microservice Should be Singly-Focused</a></li>
 <li><a href="#_easy_from_inception_to_production_iteration_is_key">2.2. Easy from Inception to Production; Iteration is key</a></li>
-<li><a href="#_production_ready">2.3. production-ready</a></li>
+<li><a href="#_agile_means_production_ready">2.3. Agile Means Production Ready</a></li>
 </ul>
 </li>
 <li><a href="#_a_pivotal_microservice_is_resilient_to_failure">3. A Pivotal Microservice is Resilient to Failure</a>
@@ -105,10 +105,10 @@
 <p>The need for scale has changed the dynamics and economics of a modern applications and application architectures. We all know that Moore&#8217;s law - named for Intel founder Gordon Moore - has not really been a law since the early 2000s when it became more cost effective to add more CPUs than to scale an individual CPU on a chip. To do more, applications would need to become more concurrent, to scale out. CSC claims that data-production will be 44000% larger in 2020 than 2009.</p>
 </div>
 <div class="paragraph">
-<p><strong>Mobile technology</strong> brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn&#8217;t exist before. Google&#8217;s Larry Page said in 2012 that  <a href="http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day">Google was seeing 15 million new Android devices activated</a> <em>every day</em>! iPhone activations tend to trend much further behind, but represents a staggering amount in any event, and taken together they represent a platform  that modern application developers would be foolish to ignore.</p>
+<p><strong>Mobile technology</strong> brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn&#8217;t exist before. Google&#8217;s Larry Page said in 2012 that  <a href="http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day">Google was seeing 15 million new Android devices activated</a> <em>every day</em>! iPhone activations tend to trend much further behind, but represent  a staggering amount in any event, and taken together they represent a platform (and market opportunity) that modern application developers would be foolish to ignore.</p>
 </div>
 <div class="paragraph">
-<p>The <strong>Internet-of-Things</strong> is the logical extension of this growth. It is the idea that computing is immersive - a part of the everyday experience. We&#8217;re already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - <a href="http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe">there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices</a>. Of course, IPv6 is a reaction to this growth; after all, if you beleive Cisco, there&#8217;ll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch), too. I won&#8217;t even tell you how many devices I have on my person on a given day!</p>
+<p>The <strong>Internet-of-Things</strong> is the logical extension of this growth. It is the idea that computing is immersive and pervasive - a part of the everyday experience. We&#8217;re already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - <a href="http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe">there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices</a>. Of course, NATS and IPv6 are reactions to this growth. After all, if you beleive Cisco, there&#8217;ll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch, etc.), too. I won&#8217;t even tell you how many devices I have on my person on a given day!</p>
 </div>
 <div class="paragraph">
 <p><strong>Social platforms</strong> have also driven scale. The diagram below (from 2012) gives a good perspective on the insane scale of most social platforms, like Facebook. Empires (anybody remember Farmville?) have been built and destroyed on the strength of piggybacking on these social platforms alone.</p>
@@ -123,16 +123,16 @@
 <div class="sect2">
 <h3 id="_agility">1.2. Agility</h3>
 <div class="paragraph">
-<p>It&#8217;s hard to know whether scale begat agility, or the other way around! Either way,  the marketplace <em>pivots</em> (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver <em>seasonal</em> iterations on their flagship software-as-a-service offerings. Millionairre-making software on the Apple App Store or the Google Play Store often has a lifetime of days or weeks. In more stalwart organizations, we&#8217;ve seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that&#8217;s designed solely to support adhoc responses to emergencies? Agility is of course as much about getting shippable code at launch as in subequent iteration.</p>
+<p>It&#8217;s hard to know whether scale begat agility, or the other way around! Either way,  the marketplace <em>pivots</em> (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver <em>seasonal</em> iterations on their flagship software-as-a-service offerings. Millionairre-making  applications on the Apple App Store or the Google Play Store often have a lifetime of weeks (or days!), not longer. In more stalwart organizations, we&#8217;ve seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that&#8217;s designed solely to support adhoc responses to emergencies? <em>Agility</em> is as much about getting shippable code at launch as in subequent iteration.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_prometheus_s_microservice">1.3. Prometheus&#8217;s Microservice</h3>
 <div class="paragraph">
-<p>It&#8217;s not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it&#8217;s taken this long! It&#8217;s hard to point to any one thing, but here&#8217;s my <em>$0.02</em>: it <em>hasn&#8217;t</em>. You see, microservices aren&#8217;t all that new - the really big players (Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.</p>
+<p>It&#8217;s not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it&#8217;s taken this long! It&#8217;s hard to point to any one thing, but here&#8217;s my <em>$0.02</em>: it <em>hasn&#8217;t</em>. You see, microservices aren&#8217;t all that new - the really big players (Alibaba, Baidu, Facebook, Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.</p>
 </div>
 <div class="paragraph">
-<p>Enough organizations had to <em>discover</em> these patterns before we - as a community - could distill them out and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let&#8217;s take a look at what makes a  <em>Pivotal microservice</em>.</p>
+<p>Enough organizations had to <em>discover</em> these patterns before we - as a community - could distill them  and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let&#8217;s take a look at what makes a  <em>Pivotal microservice</em>.</p>
 </div>
 </div>
 </div>
@@ -141,19 +141,120 @@
 <h2 id="_a_pivotal_microservice_is_agile">2. A Pivotal Microservice is Agile</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Today&#8217;s applications need to be <em>agile</em>. As the markets move quickly, so too must boardroom direction translate into value in production. It&#8217;s almost cliche to bandy around the term <em>agile</em> today, but that&#8217;s because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are <strong>not</strong> using <em>waterfall</em>! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.</p>
+<p>Today&#8217;s applications need to be <em>agile</em>. As the markets move quickly, so too must boardroom direction translate into value in production. It&#8217;s almost cliche /* TODO get accent for cliche*/ to bandy around the term <em>agile</em> today, but that&#8217;s because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are <strong>not</strong> using <em>waterfall</em>! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.</p>
 </div>
 <div class="sect2">
 <h3 id="_a_microservice_should_be_singly_focused">2.1. A Microservice Should be Singly-Focused</h3>
-
+<div class="paragraph">
+<p>Adrian Cochroft /*TODO (sp and former title at Netflix?) */ described microservices as "SOA with a bounded context."  Microservices should be as tiny and focused as makes business sense.</p>
+</div>
+<div class="paragraph">
+<p>Common sense applies. If a service might pose different scaling characteristics than the rest of the system and being able to independantly scale it would be helpful, consider factoring it out. If a service is evolved and extended at a different release cadence than the rest of the system, consider factoring it out. If a service is fundamentally better expressed using a different technology stack (and it is worth the network hop latency incurred to do so), consider factoring it out. I tend to approach service design in the same way that I approach object-oriented design: are there too many proverbial cooks in the kitchen? If so, factor the services out.</p>
+</div>
+<div class="paragraph">
+<p>This architecture is reminiscent of the UNIX pipes 'n filters model  where singly-focused command line utilities like <code>cat</code>, <code>grep</code>, <code>find</code>, etc. can be composed into more useful chains of commands to deliver results. These command line utilities (the <em>filters</em>) communicate with each other using <code>stdin</code> and <code>stdout</code> (the <em>pipes</em>).</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+My pal Chris Richardson introduced me to some talks by Fred George wherein he describes his (.NET-centric) team&#8217;s attempts to come to grips with microservices. His team ultimately decided, as rough guidance, that a microservice should be about 100 lines of code. His observation was that a service so small had some key benefits that encouraged agility. They&#8217;re easy to throw away if there&#8217;s a superior approach, easy to understand for newcomers, easy to test, easy to churn out, etc. I&#8217;m not sure if we should care all that much how <em>micro</em> a microservice is. Instead, prefer services that are <em>singly focused</em> or <em>bounded</em>. This encourages proper abstraction encapsulation, and yeilds most of the same benefits.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A service of that size is small enough that it doesn&#8217;t matter what language or framework is used. After all, if it&#8217;s decided at a later date to introduce new features, or to change the service, then it should be straightforward for anybody to understand what&#8217;s going on. If the person assuming maintenance of that service is unfamiliar with the language or framework in which it&#8217;s implemented, it&#8217;s trivial to reimplement it. After all, it&#8217;s just 100 lines of code, or so. A service that small, he observes, is so small that there&#8217;s no risk in scrapping them and starting anew.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_easy_from_inception_to_production_iteration_is_key">2.2. Easy from Inception to Production; Iteration is key</h3>
+<div class="paragraph">
+<p><a href="http://spring.io/projects/spring-boot">Spring Boot</a> is a marvelous choice for building microservices. Start at the <a href="http://start.spring.io"><em>Spring Initializr</em></a> and then tick the boxes you want to get started with. For starters, I&#8217;d check <em>Web</em>, some sort of data persistence technology like <em>Mongo DB</em> or <em>JPA</em> and <em>Actuator</em>. I usually make sure to choose Java (and version 1.8) or Groovy. Leave the other selections as they are by default. Click <em>Generate</em> and in a few seconds it will generate a <code>.zip</code> archive that contains a working, buildable Spring Boot-based application. If you leave the defaults selected, you&#8217;ll be given a Maven project. You can  easily import it into the <a href="http://spring.io/tools/sts">Spring Tool Suite</a>,  Intellij IDEA or Netbeans.</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ve removed some of the (<em>very basic</em>) stuff that was pre-generated in the <code>.zip</code> archive. Reproduced below is the Java code.</p>
+</div>
+<div class="listingblock">
+<div class="title">A complete, working REST service in <code>hello-world/src/main/java/demo/Application.java</code></div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package demo;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration <i class="conum" data-value="1"></i><b>(1)</b>
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+@RestController
+class GreetingsRestController {
+
+    @RequestMapping("/hi/{name}")  <i class="conum" data-value="2"></i><b>(2)</b>
+    public String hi(@PathVariable String name) {
+        return "Hello, " + name + "!";
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@EnableAutoConfiguration</code> is the bit that turns on Spring Boot&#8217;s magic</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>this is a simple REST endpoint: all requests of any HTTP verb that hit <code><a href="http://localhost:8080/hi/World" class="bare">http://localhost:8080/hi/World</a></code> should yeild the response <code>Hello, World!</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To make this work, I needed to have a  Maven dependency on my <code>CLASSPATH</code>: <code>org.springframework.boot:spring-boot-starter-web:1.1.8.RELEASE</code>. This service takes advantage of Spring Boot&#8217;s Maven plugin which makes running this service as simple as <code>mvn clean install &amp;&amp; java -jar target/hello-world.jar</code></p>
+</div>
+<div class="paragraph">
+<p>Spring Boot is  a powerful way to do just about anything. If you want to dive further, check out the <a href="http://spring.io/guides">guides</a>.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_production_ready">2.3. production-ready</h3>
-
+<h3 id="_agile_means_production_ready">2.3. Agile Means Production Ready</h3>
+<div class="paragraph">
+<p>Such a service, while trivial, demonstrates Spring Boot&#8217;s productivity during development. However, as anyone whose read Michael Nygard&#8217;s epic tome <a href="http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213"><em>Release It!</em></a> knows, being code-complete is not the same as being production-ready. There&#8217;s a lot that goes into being ready to integrate with operations in production. Spring Boot aims to make being production ready as easy as possible by default. Agile adherants know, of course, that being production ready (having shippable code) after every sprint is a worthy goal, and Spring Boot is nothing if not <em>agile</em>.</p>
+</div>
+<div class="paragraph">
+<p>Spring Boot provides the <em>actuator</em> module which installs useful endpoints that expose information about the application. Add the Maven dependency <code>org.springframework.boot:spring-boot-starter-actuator:1.1.8.RELEASE</code> to the <code>CLASSPATH</code> and re-run the application. The actuator module installs endpoints over REST and JMX, for example. You might for example connect the <code>/health</code> endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use <code>/trace</code> to understand the traffic hitting the application. You might use <code>/env</code> to see the running service&#8217;s environment - its environment variables, its system properties, etc.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="health.png" alt="health">
+</div>
+<div class="title">Figure 2. The Health endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="metrics.png" alt="metrics">
+</div>
+<div class="title">Figure 3. The <code>/metrics</code> shows you interesting numbers - memory, requests made to endpoints, classes loaded, etc.</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="trace.png" alt="trace">
+</div>
+<div class="title">Figure 4. The <code>/trace</code> endpoint shows you all requests made to the application.</div>
+</div>
 </div>
 </div>
 </div>
@@ -183,7 +284,7 @@
 <div class="sect2">
 <h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">4.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
 <div class="paragraph">
-<p>An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon&#8217;s SQS or Google App Engine&#8217;s task queue.</p>
+<p>An application written for  Cloud Foundry takes advantage of open, commodity backing services like <a href="http://postgresql.org">PostgreSQL</a>, <a href="http://rabbitmq.org">RabbitMQ</a>, and <a href="http://redis.io">Redis</a> so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon&#8217;s SQS or Google App Engine&#8217;s task queue.</p>
 </div>
 <div class="paragraph">
 <p>Configuration about network attached backing services is exposed in a unform way on Cloud Foundry, through process environment variables (like <code>VCAP_SERVICES</code>). Applications written to run on Cloud Foundry benefit from this uniform, easily-reproduced interface for service configuration.</p>
@@ -251,10 +352,10 @@ public class Application {
         int port = uri.getPort();
         String db = uri.getPath();
         String userAndPw = uri.getUserInfo();
-        String user = userAndPw.split(":")[0], pw = userAndPw.split(":")[1];
+        String user = userAndPw.split(":")[0];
+        String pw = userAndPw.split(":")[1];
         String url = String.format("jdbc:postgresql://%s:%s%s", host, port, db);
-        return new SimpleDriverDataSource(
-                org.postgresql.Driver.class.newInstance(), url, user, pw);
+        return new SimpleDriverDataSource(org.postgresql.Driver.class.newInstance(), url, user, pw);
     }
 
     @Bean
@@ -409,7 +510,7 @@ class ReservationsRestController {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-03 21:34:24 CET
+Last updated 2014-11-09 23:22:08 PST
 </div>
 </div>
 </body>

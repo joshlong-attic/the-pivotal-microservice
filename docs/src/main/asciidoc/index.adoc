@@ -19,9 +19,9 @@ Though our company is new (launched April 2013), we owe our rich heritage to the
 ### Scale
 The need for scale has changed the dynamics and economics of a modern applications and application architectures. We all know that Moore's law - named for Intel founder Gordon Moore - has not really been a law since the early 2000s when it became more cost effective to add more CPUs than to scale an individual CPU on a chip. To do more, applications would need to become more concurrent, to scale out. CSC claims that data-production will be 44000% larger in 2020 than 2009.
 
-**Mobile technology** brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn't exist before. Google's Larry Page said in 2012 that  http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day[Google was seeing 15 million new Android devices activated] _every day_! iPhone activations tend to trend much further behind, but represents a staggering amount in any event, and taken together they represent a platform  that modern application developers would be foolish to ignore.
+**Mobile technology** brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn't exist before. Google's Larry Page said in 2012 that  http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day[Google was seeing 15 million new Android devices activated] _every day_! iPhone activations tend to trend much further behind, but represent  a staggering amount in any event, and taken together they represent a platform (and market opportunity) that modern application developers would be foolish to ignore.
 
-The **Internet-of-Things** is the logical extension of this growth. It is the idea that computing is immersive - a part of the everyday experience. We're already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe[there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices]. Of course, IPv6 is a reaction to this growth; after all, if you beleive Cisco, there'll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch), too. I won't even tell you how many devices I have on my person on a given day!
+The **Internet-of-Things** is the logical extension of this growth. It is the idea that computing is immersive and pervasive - a part of the everyday experience. We're already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe[there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices]. Of course, NATS and IPv6 are reactions to this growth. After all, if you beleive Cisco, there'll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch, etc.), too. I won't even tell you how many devices I have on my person on a given day!
 
 **Social platforms** have also driven scale. The diagram below (from 2012) gives a good perspective on the insane scale of most social platforms, like Facebook. Empires (anybody remember Farmville?) have been built and destroyed on the strength of piggybacking on these social platforms alone.
 
@@ -30,34 +30,73 @@ image::{images}connected-world-in-60-s.png[]
 
 
 ### Agility
-It's hard to know whether scale begat agility, or the other way around! Either way,  the marketplace _pivots_ (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver _seasonal_ iterations on their flagship software-as-a-service offerings. Millionairre-making software on the Apple App Store or the Google Play Store often has a lifetime of days or weeks. In more stalwart organizations, we've seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that's designed solely to support adhoc responses to emergencies? Agility is of course as much about getting shippable code at launch as in subequent iteration.
+It's hard to know whether scale begat agility, or the other way around! Either way,  the marketplace _pivots_ (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver _seasonal_ iterations on their flagship software-as-a-service offerings. Millionairre-making  applications on the Apple App Store or the Google Play Store often have a lifetime of weeks (or days!), not longer. In more stalwart organizations, we've seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that's designed solely to support adhoc responses to emergencies? _Agility_ is as much about getting shippable code at launch as in subequent iteration.
 
 ### Prometheus's Microservice
 
-It's not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it's taken this long! It's hard to point to any one thing, but here's my _$0.02_: it _hasn't_. You see, microservices aren't all that new - the really big players (Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.
+It's not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it's taken this long! It's hard to point to any one thing, but here's my _$0.02_: it _hasn't_. You see, microservices aren't all that new - the really big players (Alibaba, Baidu, Facebook, Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.
 
-Enough organizations had to _discover_ these patterns before we - as a community - could distill them out and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let's take a look at what makes a  _Pivotal microservice_.
+Enough organizations had to _discover_ these patterns before we - as a community - could distill them  and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let's take a look at what makes a  _Pivotal microservice_.
 
 
 
 
 ## A Pivotal Microservice is Agile
 
-Today's applications need to be _agile_. As the markets move quickly, so too must boardroom direction translate into value in production. It's almost cliche to bandy around the term _agile_ today, but that's because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are *not* using _waterfall_! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.
+Today's applications need to be _agile_. As the markets move quickly, so too must boardroom direction translate into value in production. It's almost cliche /* TODO get accent for cliche*/ to bandy around the term _agile_ today, but that's because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are *not* using _waterfall_! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.
 
 ### A Microservice Should be Singly-Focused
-// lamda architecture lets u compose bigger solutions out of smaller ones. think of the unix pipes & filters model.
-// build the smallest thing that could possibly work. hiw small is small? fred geoge & 100loc; this lets components be developed and deployed w/o waiting for other teams.  it also means that a service should use the right tool for the job: ur not being forced to use oracle anymore. not every nail needs an oracle hammer. instead, use the best tool for the job. want SQL? Use Postgres (its easy w/ CFs marketplace or inbuilt services to add this). Want GIS or file store persistence? Use MongoDB. Want graph features? Use Neo4j. dont worry about deplpoyment complexity, because ur bulds should be easy/reproduceable, anywho (see the point about manifests and CF removing the frition in trying out new stuff)
+Adrian Cochroft /*TODO (sp and former title at Netflix?) */ described microservices as "SOA with a bounded context."  Microservices should be as tiny and focused as makes business sense.
+
+Common sense applies. If a service might pose different scaling characteristics than the rest of the system and being able to independantly scale it would be helpful, consider factoring it out. If a service is evolved and extended at a different release cadence than the rest of the system, consider factoring it out. If a service is fundamentally better expressed using a different technology stack (and it is worth the network hop latency incurred to do so), consider factoring it out. I tend to approach service design in the same way that I approach object-oriented design: are there too many proverbial cooks in the kitchen? If so, factor the services out.
+
+This architecture is reminiscent of the UNIX pipes 'n filters model  where singly-focused command line utilities like `cat`, `grep`, `find`, etc. can be composed into more useful chains of commands to deliver results. These command line utilities (the _filters_) communicate with each other using `stdin` and `stdout` (the _pipes_).
+
+TIP: My pal Chris Richardson introduced me to some talks by Fred George wherein he describes his (.NET-centric) team's attempts to come to grips with microservices. His team ultimately decided, as rough guidance, that a microservice should be about 100 lines of code. His observation was that a service so small had some key benefits that encouraged agility. They're easy to throw away if there's a superior approach, easy to understand for newcomers, easy to test, easy to churn out, etc. I'm not sure if we should care all that much how _micro_ a microservice is. Instead, prefer services that are _singly focused_ or _bounded_. This encourages proper abstraction encapsulation, and yeilds most of the same benefits.
+
+
+A service of that size is small enough that it doesn't matter what language or framework is used. After all, if it's decided at a later date to introduce new features, or to change the service, then it should be straightforward for anybody to understand what's going on. If the person assuming maintenance of that service is unfamiliar with the language or framework in which it's implemented, it's trivial to reimplement it. After all, it's just 100 lines of code, or so. A service that small, he observes, is so small that there's no risk in scrapping them and starting anew.
+
 
 // todo ### a microservice is test-driven
 // it should be easy to unit test code. very much in keeping w/ that philosophy, services should be developed to be as small and singly focused as possible. isolate covariants and keep them separate. spring's got amazing unit testing support. Talk about Jasmine, too.
 
 ### Easy from Inception to Production; Iteration is key
 //  spring boot (start.spring.io), look how easy it is to get a working application up and running w/ Boot!
-// less relevant, but still an impokrtant part of the story, Pivotal Trakcer happens to be a great way to manage agile based development. it's a natural workflow for those that are continuously delivering value.
+http://spring.io/projects/spring-boot[Spring Boot] is a marvelous choice for building microservices. Start at the http://start.spring.io[_Spring Initializr_] and then tick the boxes you want to get started with. For starters, I'd check _Web_, some sort of data persistence technology like _Mongo DB_ or _JPA_ and _Actuator_. I usually make sure to choose Java (and version 1.8) or Groovy. Leave the other selections as they are by default. Click _Generate_ and in a few seconds it will generate a `.zip` archive that contains a working, buildable Spring Boot-based application. If you leave the defaults selected, you'll be given a Maven project. You can  easily import it into the http://spring.io/tools/sts[Spring Tool Suite],  Intellij IDEA or Netbeans.
 
-### production-ready
-// show the boot actuator & metrics bits; show that CF makes it easy to get reproducible builds w/ manifests.yml;
+I've removed some of the (_very basic_) stuff that was pre-generated in the `.zip` archive. Reproduced below is the Java code.
+
+.A complete, working REST service in `hello-world/src/main/java/demo/Application.java`
+[source,java]
+----
+include::{code-root}hello-world/src/main/java/demo/Application.java[]
+----
+
+<1> `@EnableAutoConfiguration` is the bit that turns on Spring Boot's magic
+<2> this is a simple REST endpoint: all requests of any HTTP verb that hit `http://localhost:8080/hi/World` should yeild the response `Hello, World!`
+
+To make this work, I needed to have a  Maven dependency on my `CLASSPATH`: `org.springframework.boot:spring-boot-starter-web:1.1.8.RELEASE`. This service takes advantage of Spring Boot's Maven plugin which makes running this service as simple as `mvn clean install && java -jar target/hello-world.jar`
+
+
+Spring Boot is  a powerful way to do just about anything. If you want to dive further, check out the http://spring.io/guides[guides].
+
+
+### Agile Means Production Ready
+
+Such a service, while trivial, demonstrates Spring Boot's productivity during development. However, as anyone whose read Michael Nygard's epic tome http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213[_Release It!_] knows, being code-complete is not the same as being production-ready. There's a lot that goes into being ready to integrate with operations in production. Spring Boot aims to make being production ready as easy as possible by default. Agile adherants know, of course, that being production ready (having shippable code) after every sprint is a worthy goal, and Spring Boot is nothing if not _agile_.
+
+Spring Boot provides the _actuator_ module which installs useful endpoints that expose information about the application. Add the Maven dependency `org.springframework.boot:spring-boot-starter-actuator:1.1.8.RELEASE` to the `CLASSPATH` and re-run the application. The actuator module installs endpoints over REST and JMX, for example. You might for example connect the `/health` endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use `/trace` to understand the traffic hitting the application. You might use `/env` to see the running service's environment - its environment variables, its system properties, etc.
+
+.The Health endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.
+image::{images}health.png[]
+
+.The `/metrics` shows you interesting numbers - memory, requests made to endpoints, classes loaded, etc.
+image::{images}metrics.png[]
+
+.The `/trace` endpoint shows you all requests made to the application.
+image::{images}trace.png[]
+
 
 ## A Pivotal Microservice is Resilient to Failure
 ### PCF & heartbeat
@@ -75,7 +114,7 @@ A microservice should  be _portable_. Portability affects various layers of the 
 
 ### Open services like PostgreSQL, MongoDB, Redis, Hadoop
 
-An application written for  Cloud Foundry   takes advantage of open, commodity backing services like PostgreSQL, RabbitMQ, and Redis so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
+An application written for  Cloud Foundry takes advantage of open, commodity backing services like http://postgresql.org[PostgreSQL], http://rabbitmq.org[RabbitMQ], and http://redis.io[Redis] so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
 
 Configuration about network attached backing services is exposed in a unform way on {CF}, through process environment variables (like `VCAP_SERVICES`). Applications written to run on {CF} benefit from this uniform, easily-reproduced interface for service configuration.
 
@@ -84,7 +123,7 @@ Configuration about network attached backing services is exposed in a unform way
 ----
 include::{code-root}portable/src/main/resources/application.properties[]
 ----
-.this file - `application.properties` - will be loaded when the Spring Boot application starts up. 
+.this file - `application.properties` - will be loaded when the Spring Boot application starts up.
 
 
 Spring Boot and Spring Cloud makes it even easier to work with this configuration by normalizing configuration coming from external variables, property (or `.yml`) files, Java `-D` arguments, etc.
