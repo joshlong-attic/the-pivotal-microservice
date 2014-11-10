@@ -78,8 +78,7 @@ include::{code-root}hello-world/src/main/java/demo/Application.java[]
 
 To make this work, I needed to have a  Maven dependency on my `CLASSPATH`: `org.springframework.boot:spring-boot-starter-web:1.1.8.RELEASE`. This service takes advantage of Spring Boot's Maven plugin which makes running this service as simple as `mvn clean install && java -jar target/hello-world.jar`
 
-
-Spring Boot is  a powerful way to do just about anything. If you want to dive further, check out the http://spring.io/guides[guides].
+Spring Boot is  a powerful way to do just about anything. If you want to dive further into some of its other capabilities, check out the http://spring.io/guides[guides].
 
 
 ### Agile Means Production Ready
@@ -88,7 +87,7 @@ Such a service, while trivial, demonstrates Spring Boot's productivity during de
 
 Spring Boot provides the _actuator_ module which installs useful endpoints that expose information about the application. Add the Maven dependency `org.springframework.boot:spring-boot-starter-actuator:1.1.8.RELEASE` to the `CLASSPATH` and re-run the application. The actuator module installs endpoints over REST and JMX, for example. You might for example connect the `/health` endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use `/trace` to understand the traffic hitting the application. You might use `/env` to see the running service's environment - its environment variables, its system properties, etc.
 
-.The Health endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.
+.The `/health` endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.
 image::{images}health.png[]
 
 .The `/metrics` shows you interesting numbers - memory, requests made to endpoints, classes loaded, etc.
@@ -97,15 +96,19 @@ image::{images}metrics.png[]
 .The `/trace` endpoint shows you all requests made to the application.
 image::{images}trace.png[]
 
+While it's easy enough to get a Spring Boot application up and running given a Java virtual machine, the devil, as they say, is often in the details. Taking this application to production involves describing which backing services (databases, message queues, etc.) are required (and where they live), how much RAM and other system resources it needs, on what host it should be exposed over, how many instances should run for capacity, and much more.
 
-## A Pivotal Microservice is Resilient to Failure
-### PCF & heartbeat
-### Spring Cloud & Hystrix
-### Service Death Might just be the platform helping u out.
-// after all, it could just be moving a node from one box to another in the case of an outage
-//- light, resilient to failure, death (they should be easy to start, kill, at a moments notice); theyre quick to start, stop. can die  at a moments notice; no long running HTTP svcs. u can stop listening to http and refuse incoming requests; netflix chaos monkey; choregraphy vs orchestration (eg, react to failure per service)
+Fortunately, modern Platform-as-a-Service options like http://cloudfoundry.org[Cloud Foundry] make describing these things - and more -  trivial. Cloud Foundry is an open-source Apache 2 licensed project that Pivotal makes available through a hosted service  as  http://run.pivotal.io[Pivotal Web Services] and that Pivotal also sells as http://www.pivotal.io/platform-as-a-service/pivotal-cf[an on-premise PaaS offering called Pivotal Cloud Foundry].
+
+Cloud Foundry applications can be configured through the `cf` CLI or through a `manfiest.yml` file that typically lives in the root of the deployed application. Here is a trivial `manfifest.yml` for the simple Spring Boot service we just created.
 
 
+
+.This `manifest.yml` tells the PaaS what we need to run this application; how much RAM, which binary to run, which backing-services to run (though we've specified none here), the URI
+[source,java]
+----
+include::{code-root}hello-world/manifest.yml[]
+----
 
 // ----------------------------------------------------------
 ## A Pivotal Microservice is Portable
@@ -136,6 +139,7 @@ Spring, fundamentally, is an inversion-of-control container. Inversion-of-contro
 ----
 include::{code-root}portable/src/main/java/demo/Application.java[]
 ----
+.There are two `DataSource`s configured in this application, but Spring profiles can be used to selectively _activate_ the right one based on the environment.
 
 The Spring Cloud project provides PaaS connectors that make this sort of indirection a snap to setup on Cloud Foundry or Heroku, letting you write PaaS agnostic code if you don't want to pursue that same indirection through configuration properties. Because of this flexibility, Spring applications can even be made to run on legacy environments like IBM WebSphere, Oracle WebLogic or JBoss WildFly. Now _that's_ portable!
 
@@ -148,12 +152,22 @@ Applications that run on Cloud Foundry are, of course, not required to stay on C
 
 
 ## A Pivotal Microservice is Configurable
-// reference the varous 12f points re: condfiguration
+
 ### look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)
 ### Spring Cloud config-service.
 ### Spring Cloud refreshable configuration
 ### CF env vars
 ### CF manifests
+
+
+## A Pivotal Microservice is Resilient to Failure
+### PCF & heartbeat
+### Spring Cloud & Hystrix
+### Service Death Might just be the platform helping u out.
+// after all, it could just be moving a node from one box to another in the case of an outage
+//- light, resilient to failure, death (they should be easy to start, kill, at a moments notice); theyre quick to start, stop. can die  at a moments notice; no long running HTTP svcs. u can stop listening to http and refuse incoming requests; netflix chaos monkey; choregraphy vs orchestration (eg, react to failure per service)
+
+
 
 
 ## A Pivotal Microservice Should Play Well with Others

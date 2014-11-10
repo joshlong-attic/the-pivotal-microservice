@@ -1,0 +1,8 @@
+---
+applications:
+- name: hello-world
+  memory: 512M
+  instances: 1
+  host: hello-world-${random-word}
+  domain: cfapps.io
+  path: target/hello-world.jar

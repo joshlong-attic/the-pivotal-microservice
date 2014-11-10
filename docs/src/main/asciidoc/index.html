@@ -37,27 +37,27 @@
 <li><a href="#_agile_means_production_ready">2.3. Agile Means Production Ready</a></li>
 </ul>
 </li>
-<li><a href="#_a_pivotal_microservice_is_resilient_to_failure">3. A Pivotal Microservice is Resilient to Failure</a>
+<li><a href="#_a_pivotal_microservice_is_portable">3. A Pivotal Microservice is Portable</a>
 <ul class="sectlevel2">
-<li><a href="#_pcf_heartbeat">3.1. PCF &amp; heartbeat</a></li>
-<li><a href="#_spring_cloud_hystrix">3.2. Spring Cloud &amp; Hystrix</a></li>
-<li><a href="#_service_death_might_just_be_the_platform_helping_u_out">3.3. Service Death Might just be the platform helping u out.</a></li>
+<li><a href="#_open_services_like_postgresql_mongodb_redis_hadoop">3.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</a></li>
+<li><a href="#_spring_makes_it_easy_to_stay_platform_agnostic">3.2. Spring makes it easy to stay platform agnostic</a></li>
+<li><a href="#_cloudfoundry_is_an_open_paas">3.3. CloudFoundry is an Open PaaS</a></li>
 </ul>
 </li>
-<li><a href="#_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</a>
+<li><a href="#_a_pivotal_microservice_is_configurable">4. A Pivotal Microservice is Configurable</a>
 <ul class="sectlevel2">
-<li><a href="#_open_services_like_postgresql_mongodb_redis_hadoop">4.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</a></li>
-<li><a href="#_spring_makes_it_easy_to_stay_platform_agnostic">4.2. Spring makes it easy to stay platform agnostic</a></li>
-<li><a href="#_cloudfoundry_is_an_open_paas">4.3. CloudFoundry is an Open PaaS</a></li>
+<li><a href="#_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">4.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</a></li>
+<li><a href="#_spring_cloud_config_service">4.2. Spring Cloud config-service.</a></li>
+<li><a href="#_spring_cloud_refreshable_configuration">4.3. Spring Cloud refreshable configuration</a></li>
+<li><a href="#_cf_env_vars">4.4. CF env vars</a></li>
+<li><a href="#_cf_manifests">4.5. CF manifests</a></li>
 </ul>
 </li>
-<li><a href="#_a_pivotal_microservice_is_configurable">5. A Pivotal Microservice is Configurable</a>
+<li><a href="#_a_pivotal_microservice_is_resilient_to_failure">5. A Pivotal Microservice is Resilient to Failure</a>
 <ul class="sectlevel2">
-<li><a href="#_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">5.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</a></li>
-<li><a href="#_spring_cloud_config_service">5.2. Spring Cloud config-service.</a></li>
-<li><a href="#_spring_cloud_refreshable_configuration">5.3. Spring Cloud refreshable configuration</a></li>
-<li><a href="#_cf_env_vars">5.4. CF env vars</a></li>
-<li><a href="#_cf_manifests">5.5. CF manifests</a></li>
+<li><a href="#_pcf_heartbeat">5.1. PCF &amp; heartbeat</a></li>
+<li><a href="#_spring_cloud_hystrix">5.2. Spring Cloud &amp; Hystrix</a></li>
+<li><a href="#_service_death_might_just_be_the_platform_helping_u_out">5.3. Service Death Might just be the platform helping u out.</a></li>
 </ul>
 </li>
 <li><a href="#_a_pivotal_microservice_should_play_well_with_others">6. A Pivotal Microservice Should Play Well with Others</a>
@@ -226,7 +226,7 @@ class GreetingsRestController {
 <p>To make this work, I needed to have a  Maven dependency on my <code>CLASSPATH</code>: <code>org.springframework.boot:spring-boot-starter-web:1.1.8.RELEASE</code>. This service takes advantage of Spring Boot&#8217;s Maven plugin which makes running this service as simple as <code>mvn clean install &amp;&amp; java -jar target/hello-world.jar</code></p>
 </div>
 <div class="paragraph">
-<p>Spring Boot is  a powerful way to do just about anything. If you want to dive further, check out the <a href="http://spring.io/guides">guides</a>.</p>
+<p>Spring Boot is  a powerful way to do just about anything. If you want to dive further into some of its other capabilities, check out the <a href="http://spring.io/guides">guides</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -241,7 +241,7 @@ class GreetingsRestController {
 <div class="content">
 <img src="health.png" alt="health">
 </div>
-<div class="title">Figure 2. The Health endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.</div>
+<div class="title">Figure 2. The <code>/health</code> endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.</div>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -255,34 +255,39 @@ class GreetingsRestController {
 </div>
 <div class="title">Figure 4. The <code>/trace</code> endpoint shows you all requests made to the application.</div>
 </div>
+<div class="paragraph">
+<p>While it&#8217;s easy enough to get a Spring Boot application up and running given a Java virtual machine, the devil, as they say, is often in the details. Taking this application to production involves describing which backing services (databases, message queues, etc.) are required (and where they live), how much RAM and other system resources it needs, on what host it should be exposed over, how many instances should run for capacity, and much more.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, modern Platform-as-a-Service options like <a href="http://cloudfoundry.org">Cloud Foundry</a> make describing these things - and more -  trivial. Cloud Foundry is an open-source Apache 2 licensed project that Pivotal makes available through a hosted service  as  <a href="http://run.pivotal.io">Pivotal Web Services</a> and that Pivotal also sells as <a href="http://www.pivotal.io/platform-as-a-service/pivotal-cf">an on-premise PaaS offering called Pivotal Cloud Foundry</a>.</p>
+</div>
+<div class="paragraph">
+<p>Cloud Foundry applications can be configured through the <code>cf</code> CLI or through a <code>manfiest.yml</code> file that typically lives in the root of the deployed application. Here is a trivial <code>manfifest.yml</code> for the simple Spring Boot service we just created.</p>
+</div>
+<div class="listingblock">
+<div class="title">This <code>manifest.yml</code> tells the PaaS what we need to run this application; how much RAM, which binary to run, which backing-services to run (though we&#8217;ve specified none here), the URI</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">---
+applications:
+- name: hello-world
+  memory: 512M
+  instances: 1
+  host: hello-world-${random-word}
+  domain: cfapps.io
+  path: target/hello-world.jar</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_a_pivotal_microservice_is_resilient_to_failure">3. A Pivotal Microservice is Resilient to Failure</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_pcf_heartbeat">3.1. PCF &amp; heartbeat</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_spring_cloud_hystrix">3.2. Spring Cloud &amp; Hystrix</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_service_death_might_just_be_the_platform_helping_u_out">3.3. Service Death Might just be the platform helping u out.</h3>
-
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_a_pivotal_microservice_is_portable">4. A Pivotal Microservice is Portable</h2>
+<h2 id="_a_pivotal_microservice_is_portable">3. A Pivotal Microservice is Portable</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A microservice should  be <em>portable</em>. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer&#8217;s local machine <em>and</em> the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  <a href="http://12factor.net/dev-prod-parity">12-Factor manifesto&#8217;s page on development and production parity</a>. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the <em>agile</em> nature of a Pivotal microservice.</p>
 </div>
 <div class="sect2">
-<h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">4.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
+<h3 id="_open_services_like_postgresql_mongodb_redis_hadoop">3.1. Open services like PostgreSQL, MongoDB, Redis, Hadoop</h3>
 <div class="paragraph">
 <p>An application written for  Cloud Foundry takes advantage of open, commodity backing services like <a href="http://postgresql.org">PostgreSQL</a>, <a href="http://rabbitmq.org">RabbitMQ</a>, and <a href="http://redis.io">Redis</a> so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon&#8217;s SQS or Google App Engine&#8217;s task queue.</p>
 </div>
@@ -302,7 +307,7 @@ postgres.uri ${vcap.services.pivotal-ms-pgsql.credentials.uri}</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_spring_makes_it_easy_to_stay_platform_agnostic">4.2. Spring makes it easy to stay platform agnostic</h3>
+<h3 id="_spring_makes_it_easy_to_stay_platform_agnostic">3.2. Spring makes it easy to stay platform agnostic</h3>
 <div class="paragraph">
 <p>Spring, fundamentally, is an inversion-of-control container. Inversion-of-control makes it easy to write objects that are ignorant of <em>where</em> a collaborating object came from. A bean may have a reference to a <code>javax.sql.DataSource</code> , but it doesn&#8217;t know whether that <code>javax.sql.DataSouce</code> was provided as a mock in a unit test, whether it was bound to JNDI or whether it was resolved by the Cloud Foundry <code>VCAP_SERVICES</code> environment variable. Spring makes it easy to tag environment-specific bean configuration using <em>profiles</em>. Here&#8217;s an example:</p>
 </div>
@@ -400,11 +405,12 @@ class ReservationsRestController {
 </div>
 </div>
 <div class="paragraph">
+<div class="title">There are two `DataSource`s configured in this application, but Spring profiles can be used to selectively <em>activate</em> the right one based on the environment.</div>
 <p>The Spring Cloud project provides PaaS connectors that make this sort of indirection a snap to setup on Cloud Foundry or Heroku, letting you write PaaS agnostic code if you don&#8217;t want to pursue that same indirection through configuration properties. Because of this flexibility, Spring applications can even be made to run on legacy environments like IBM WebSphere, Oracle WebLogic or JBoss WildFly. Now <em>that&#8217;s</em> portable!</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_cloudfoundry_is_an_open_paas">4.3. CloudFoundry is an Open PaaS</h3>
+<h3 id="_cloudfoundry_is_an_open_paas">3.3. CloudFoundry is an Open PaaS</h3>
 <div class="paragraph">
 <p>Applications that run on Cloud Foundry are, of course, not required to stay on Cloud Foundry. You might start your application on Pivotal&#8217;s hosted, public, Cloud Foundry-based Pivotal Web Services, then decide to move things in-house on your own Cloud Foundry installation using Pivotal Cloud Foundry. Don&#8217;t want to use either? Use any of the many Cloud Foundry-based services and products provided by ecosystem partners, like IBM&#8217;s BlueMix. And, assuming you&#8217;ve exposed service configuratino as environment variables, there&#8217;s no reason you couldn&#8217;t run the application unchanged on another PaaS altogether.</p>
 </div>
@@ -412,26 +418,43 @@ class ReservationsRestController {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_a_pivotal_microservice_is_configurable">5. A Pivotal Microservice is Configurable</h2>
+<h2 id="_a_pivotal_microservice_is_configurable">4. A Pivotal Microservice is Configurable</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">5.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</h3>
+<h3 id="_look_at_how_spring_boot_normalizes_configuration_env_d_application_yml_properties_etc">4.1. look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_spring_cloud_config_service">5.2. Spring Cloud config-service.</h3>
+<h3 id="_spring_cloud_config_service">4.2. Spring Cloud config-service.</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_spring_cloud_refreshable_configuration">5.3. Spring Cloud refreshable configuration</h3>
+<h3 id="_spring_cloud_refreshable_configuration">4.3. Spring Cloud refreshable configuration</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_cf_env_vars">5.4. CF env vars</h3>
+<h3 id="_cf_env_vars">4.4. CF env vars</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_cf_manifests">5.5. CF manifests</h3>
+<h3 id="_cf_manifests">4.5. CF manifests</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_pivotal_microservice_is_resilient_to_failure">5. A Pivotal Microservice is Resilient to Failure</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pcf_heartbeat">5.1. PCF &amp; heartbeat</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_spring_cloud_hystrix">5.2. Spring Cloud &amp; Hystrix</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_service_death_might_just_be_the_platform_helping_u_out">5.3. Service Death Might just be the platform helping u out.</h3>
 
 </div>
 </div>
@@ -510,7 +533,7 @@ class ReservationsRestController {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-09 23:22:08 PST
+Last updated 2014-11-10 00:06:59 PST
 </div>
 </div>
 </body>
