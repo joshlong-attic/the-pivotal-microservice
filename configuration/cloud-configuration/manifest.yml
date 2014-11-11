@@ -1,0 +1,13 @@
+---
+applications:
+- name: cloud-configuration
+  memory: 512M
+  instances: 1
+  host: cloud-configuration-${random-word}
+  domain: cfapps.io
+  path: target/cloud-configuration.jar
+  services:
+    - pivotal-ms-pgsql
+  env:
+    NAME: "Cloud" # <1> 
+    debug: "true"
