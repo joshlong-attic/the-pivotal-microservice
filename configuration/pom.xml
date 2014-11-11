@@ -10,8 +10,9 @@
     <artifactId>configuration</artifactId>
     <packaging>pom</packaging>
     <modules>
-      <module>cloud-configuration</module>
-      <module>external-configuration</module>
+        <module>cloud-configuration</module>
+        <module>external-configuration</module>
+        <module>config-server</module>
+        <module>config-client</module>
     </modules>
-
 </project>
