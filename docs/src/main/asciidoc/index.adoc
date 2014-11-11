@@ -1,6 +1,7 @@
 # The Pivotal Microservice
 Josh Long
 //:doctype: book
+:boot-version: 1.1.8.RELEASE
 :numbered: false
 :CF:  Cloud Foundry
 :toc: left
@@ -54,7 +55,6 @@ This architecture is reminiscent of the UNIX pipes 'n filters model  where singl
 
 TIP: My pal Chris Richardson introduced me to some talks by Fred George wherein he describes his (.NET-centric) team's attempts to come to grips with microservices. His team ultimately decided, as rough guidance, that a microservice should be about 100 lines of code. His observation was that a service so small had some key benefits that encouraged agility. They're easy to throw away if there's a superior approach, easy to understand for newcomers, easy to test, easy to churn out, etc. I'm not sure if we should care all that much how _micro_ a microservice is. Instead, prefer services that are _singly focused_ or _bounded_. This encourages proper abstraction encapsulation, and yeilds most of the same benefits.
 
-
 A service of that size is small enough that it doesn't matter what language or framework is used. After all, if it's decided at a later date to introduce new features, or to change the service, then it should be straightforward for anybody to understand what's going on. If the person assuming maintenance of that service is unfamiliar with the language or framework in which it's implemented, it's trivial to reimplement it. After all, it's just 100 lines of code, or so. A service that small, he observes, is so small that there's no risk in scrapping them and starting anew.
 
 
@@ -67,16 +67,16 @@ http://spring.io/projects/spring-boot[Spring Boot] is a marvelous choice for bui
 
 I've removed some of the (_very basic_) stuff that was pre-generated in the `.zip` archive. Reproduced below is the Java code.
 
-.A complete, working REST service in `hello-world/src/main/java/demo/Application.java`
+.A complete, working REST service in `hello-world/src/main/java/hello/Application.java`
 [source,java]
 ----
-include::{code-root}hello-world/src/main/java/demo/Application.java[]
+include::{code-root}hello-world/src/main/java/hello/Application.java[]
 ----
 
 <1> `@EnableAutoConfiguration` is the bit that turns on Spring Boot's magic
 <2> this is a simple REST endpoint: all requests of any HTTP verb that hit `http://localhost:8080/hi/World` should yeild the response `Hello, World!`
 
-To make this work, I needed to have a  Maven dependency on my `CLASSPATH`: `org.springframework.boot:spring-boot-starter-web:1.1.8.RELEASE`. This service takes advantage of Spring Boot's Maven plugin which makes running this service as simple as `mvn clean install && java -jar target/hello-world.jar`
+To make this work, I needed to have a  Maven dependency on my `CLASSPATH`: `org.springframework.boot:spring-boot-starter-web:{boot-version}`. This service takes advantage of Spring Boot's Maven plugin which makes running this service as simple as `mvn clean install && java -jar target/hello-world.jar`
 
 Spring Boot is  a powerful way to do just about anything. If you want to dive further into some of its other capabilities, check out the http://spring.io/guides[guides].
 
@@ -85,7 +85,7 @@ Spring Boot is  a powerful way to do just about anything. If you want to dive fu
 
 Such a service, while trivial, demonstrates Spring Boot's productivity during development. However, as anyone whose read Michael Nygard's epic tome http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213[_Release It!_] knows, being code-complete is not the same as being production-ready. There's a lot that goes into being ready to integrate with operations in production. Spring Boot aims to make being production ready as easy as possible by default. Agile adherants know, of course, that being production ready (having shippable code) after every sprint is a worthy goal, and Spring Boot is nothing if not _agile_.
 
-Spring Boot provides the _actuator_ module which installs useful endpoints that expose information about the application. Add the Maven dependency `org.springframework.boot:spring-boot-starter-actuator:1.1.8.RELEASE` to the `CLASSPATH` and re-run the application. The actuator module installs endpoints over REST and JMX, for example. You might for example connect the `/health` endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use `/trace` to understand the traffic hitting the application. You might use `/env` to see the running service's environment - its environment variables, its system properties, etc.
+Spring Boot provides the _actuator_ module which installs useful endpoints that expose information about the application. Add the Maven dependency `org.springframework.boot:spring-boot-starter-actuator:{boot-version}` to the `CLASSPATH` and re-run the application. The actuator module installs endpoints over REST and JMX, for example. You might for example connect the `/health` endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use `/trace` to understand the traffic hitting the application. You might use `/env` to see the running service's environment - its environment variables, its system properties, etc.
 
 .The `/health` endpoint. This will give you useful defaults for SQL database, MongoDB, RabbitMQ, SOLR, Redis, and more. You can also override it.
 image::{images}health.png[]
@@ -112,55 +112,148 @@ include::{code-root}hello-world/manifest.yml[]
 
 Moving the application to production is now as simple as `cf push` in the directory where the `manifest.yml` file lives.
 
-// ----------------------------------------------------------
-## A Pivotal Microservice is Portable
 
-A microservice should  be _portable_. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
+## A Pivotal Microservice is Configurable
 
-### Open services like PostgreSQL, MongoDB, Redis, Hadoop
+Let's distinguish the two types of configuration: application internal configuration and external configuration. Application internal configuration - such as the wiring of the components in the application - and external configuration - things that change from one environmnet to another.
 
-An application written for  Cloud Foundry takes advantage of open, commodity backing services like http://postgresql.org[PostgreSQL], http://rabbitmq.org[RabbitMQ], and http://redis.io[Redis] so that developers can acheive identical stacks in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
-
-Configuration about network attached backing services is exposed in a unform way on {CF}, through process environment variables (like `VCAP_SERVICES`). Applications written to run on {CF} benefit from this uniform, easily-reproduced interface for service configuration.
+Spring applications are _configured_ in that they're a grouing of objects (_beans_) wired together to build an application. This configuration is internal, and belongs in the Java language or XML configuration formats natively supported by Spring. Ideally, you'll need to perform very little of this and instead lean on the defaults provided by Spring Boot's _auto configuration_.
 
 
-[source,text]
+
+### Externalized Application Configuration
+
+For external configuration _values_ - such as database authentication information  - use Spring's property placeholder resolution. The {12f}/config[12 Factor applications guidance on configuration] suggests that things that may change between deploys (such as as database authentication information between different deployment environments like _staging_, _production_, and a given user's _developer environment_) should be externalzed from the application.  Spring natively works with configuration values. It supports an `Environment` abstraction that reads property keys and values from numerous sources. As a running Spring Boot application you can read from this environment in many ways. In the example below, we demonstrate a few different ways to access values from the environment in Spring.
+
+
+.Asking questions of the `Environment` in which a Spring application runs.
+[source,java]
 ----
-include::{code-root}portable/src/main/resources/application.properties[]
+include::{code-root}configuration/external-configuration/src/main/java/configuration/external/Application.java[]
 ----
-.this file - `application.properties` - will be loaded when the Spring Boot application starts up.
 
+<1> This variable uses the  http://docs.spring.io/spring-framework/docs/3.0.x/spring-framework-reference/html/expressions.html[Spring Expression Language] to dynamically resolve the `PATH` variable and then split it using the system's `path.separator` value. SpEL gives developers the ability to be a bit dynamic in resolving properties, though I'd prefer the `${..}` syntax for the common cases.
+<2> This variable is simply _injected_ with the value of `path`, as resolved by talking to the `Environment` abstraction.
+<3> Here too, the variable is simply _injected_ with the value of `path` as resolved by talking to the `Environment`.  If the property is not defined, then Spring will set the variable to the value `World`
+<4> here, the `PATH` environment variable is resolved from the `Environment` abstraction directly
 
-Spring Boot and Spring Cloud makes it even easier to work with this configuration by normalizing configuration coming from external variables, property (or `.yml`) files, Java `-D` arguments, etc.
+Spring Boot makes short work of reading and working with hierarchical YAML and standard `.properties`-file based property definitions. For example, you could define a file `configuration/external-configuration/src/main/resources/application.properties` file with a definition for a `name` property like so, and then re-run the application above.
 
-### Spring makes it easy to stay platform agnostic
+.The definition of a `name` property in a `application.properties`
+[source,properties]
+-----
+name=Spring Users
+-----
 
-Spring, fundamentally, is an inversion-of-control container. Inversion-of-control makes it easy to write objects that are ignorant of _where_ a collaborating object came from. A bean may have a reference to a `javax.sql.DataSource` , but it doesn't know whether that `javax.sql.DataSouce` was provided as a mock in a unit test, whether it was bound to JNDI or whether it was resolved by the Cloud Foundry `VCAP_SERVICES` environment variable. Spring makes it easy to tag environment-specific bean configuration using _profiles_. Here's an example:
+You could also dereference   other environment values, like this:
+
+.Aliasing the property `name` to the value of the environment variable `USER` in  `src/main/resources/application.properties`
+[source,properties]
+-----
+name=${env.USER}
+-----
+
+Spring Boot responds to numerous well-known properties as well. For example, if you're uising the default embedded container support (as we are in this example) then you can specify on which port the application should listen using the `server.port` property. If you specify a value of `0`, Spring Boot will attempt to pick a port for you. To see what other properties Spring Boot will respond to given the libraries on the `CLASSPATH`, add the `org.springframework.boot:spring-boot-starter-actuator:{boot-version}` dependency to your CLASSPATH and then visit `/configprops`.
+
+Spring  resolves properties from a chain of `PropertySource` s, each of which has a priority relative to others. Spring Boot takes this support further, and defines sources from an application's command-line arguments, the `java` process' `-D`-style arguments,  and shell environment variables. Spring Boot resolves values from the outer most contexts first. An environment variable takes precedecne over a `-D` argument which takes precedence over a property defined in an internal property file or `.yml` file. In the example above, we could leave our `application.properties` and - before running the example, define an environment variable `NAME` to override the value provided.
+
+.Running the application with different arguments
+[source,shell]
+----
+include::{code-root}configuration/external-configuration/run.sh[]
+----
+
+<1> the `server.port` property is _fuzzily_ resolved from the `SERVER_PORT` environment variable. As specified, Spring Boot will attempt to find and assign a port for the application, almost at random.
+<2> the `name` property specified as `-Dname=Java` _overrides_ the property of the same name in the compiled `.jar` 's `application.properties`
+
+### Cloud Foundry environment variables
+
+Cloud Foundry externalizes all environment-specific configuration using environment variables  that Cloud Foundry makes available for every process. This is very much in keeping with the {12f}/config[12 Factor applications guidance on configuration]. It's wise not to count on these values remaining static. Don't cache them. If your application is restarted, or the server on which it is running  goes  down, Cloud Foundry will start the application on another node and the information may change. Ditto for the backing service authentication information. So, instead, prefer to consume these values through the environment and re-establish connections on application restart.
 
 [source,java]
 ----
-include::{code-root}portable/src/main/java/demo/Application.java[]
+include::{code-root}configuration/cloud-configuration/src/main/java/configuration/cloud/Application.java[]
 ----
-.There are two `DataSource`s configured in this application, but Spring profiles can be used to selectively _activate_ the right one based on the environment.
 
-The Spring Cloud project provides PaaS connectors that make this sort of indirection a snap to setup on Cloud Foundry or Heroku, letting you write PaaS agnostic code if you don't want to pursue that same indirection through configuration properties. Because of this flexibility, Spring applications can even be made to run on legacy environments like IBM WebSphere, Oracle WebLogic or JBoss WildFly. Now _that's_ portable!
+<1> This is a simple `@Bean` definition for a `javax.sql.DataSource`
+<2>  The  `VCAP_SERVICES` environment variable has a JSON structure with a JSON structure of the services available to this provisioned application. We can index into that JSON structure by following the JSON path to the value we want. Thus, `vcap.services.pivotal-ms-pgsql.credentials.uri` ultimately resolves to the `uri` attribute in this JSON structure stored as a value of the `VCAP_SERVICES` environment variable: `{ "pivotal-ms-pgsql" : { "credentials" : { "uri": "..."} } }`
+<3> This bean  definition could potentially throw an `Exception` when trying to create the `URI`
+<4> Here we're using Spring's `SimpleDriverDataSource` example to demonstrate what's going on here. However, you normally don't need to worry about definining `DataSource`s and - certainly - if you're going to provide a `DataSource` then consider wrapping it in a connection pool like Tomcat's database connection pool (which Spring Boot ships with, by default).
+<5> When this application is started, Spring Boot will make sure that all beans of type `CommandLineRunner` are given a callback. In this case, all records from the database will be returned and written to `stdout`.
+<6> This prints the environment value of the `name` property which, if unspecified, would default to `World`.
+
+You may provide external configuration values for Cloud Foundry applications easily. Here is a Cloud Foundry `manifest.yml` for our application that - besides specifying which backing service our application should consume and how much system resources are needed to run it - specifies an environment variable - `NAME` - that overrides the `name` attribute.
+
+[source,yml]
+----
+include::{code-root}configuration/cloud-configuration/manifest.yml[]
+----
+
+<1> In this example, we define extra environment variables. One is `DEBUG`, which Spring Boot will see and turn on various debug-specific features: it will print out all the auto-configurations that matched, turn on reloadable templates, and more. The next environment variable is simply a definition of the variable `NAME` which we saw earlier. Here, Spring Boot will print out `Hello, Cloud!` on the console instead of the default value `World`. You can see this output by running `cf logs cloud-configuration --recent`.
+
+
+### Spring Cloud config-service.
+
+
+### Spring Cloud refreshable configuration
+
+
+
+
+// ----------------------------------------------------------
+## A Pivotal Microservice is Portable
+
+A microservice should  be _portable_. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, external configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
+
+### Open services like PostgreSQL, MongoDB, Redis, Hadoop
+The first, implied point here is that you should not use services that don't exist in both your local developer environment or your productione environment. An application written for  Cloud Foundry takes advantage of open, commodity backing services like http://postgresql.org[PostgreSQL], http://rabbitmq.org[RabbitMQ], and http://redis.io[Redis] so that developers can acheive parity  in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
+
+### Use Spring Profiles to Move Between Environments
+
+Spring's `Environment` abstraction - which we've already seen in action when asking questions of the application's environment - can also be partitioned along _profiles_. A It's easiest to think of a profile as a sort of label, or tag, that marks one bean, or configuration value, as belonging to a specific environment. You can _activate_ profiles readily. The easiest way is to define an environment variable, `SPRING_PROFILES_ACTIVE`, and set as its value one or more comma-delimited profile names, like: `cloud`. If you partition values appropriately and then activate appropriately, you can toggle different configuration sets.
+
+Let's revisit our simple example from before. This time, we'll rework it ever so slightly so that there's a bit of indirection in specifying profiles. As such, this code will run perfectly on both our _local_ environment (or, rather, the `default` profile which is the active environment we get absent any specific profile) and in the cloud (Cloud Foundry).
+
+.Running the application with different arguments
+[source,shell]
+----
+include::{code-root}portable/src/main/java/portable/Application.java[]
+----
+
+
+You might for example define a set of configration values for  different environments. By default, Spring Boot will load configuration property files  of the form `application.properties` or `application.yml`. If there is an `application-PROFILE.properties` file, where `PROFILE` is the name of the active `profile`, Spring Boot will load the more specific configuration file, too.
+
+
+.This configuration file (`application-default.properties`) will be activated when no other profile is activated (such as in a local environment).
+[source,properties]
+----
+include::{code-root}portable/src/main/resources/application-default.properties[]
+----
+
+.This configuration file (`application-cloud.properties`) will be activated when the `cloud` profile is active.
+[source,properties]
+----
+include::{code-root}portable/src/main/resources/application-cloud.properties[]
+----
+
+<1> Specifically, this will use the port specified by Cloud Foundry, and exposed to our process through the `vcap.application.port` property by Spring Boot
+<2> Our PostgreSQL database connection URI will be resolved by dereferencing the URI exposed through the `VCAP_SERVICES` environment variable.
+
+You can easily specify that your application should honor a specific profile by specifying the active profile using the well-known environment variable, `SPRING_ACTIVE_PROFILE`, be it through the `cf` CLI or a Cloud Foundry `manifest.yml`.
+
+.A  `manifest.yml` file that sets the `SPRING_PROFILES_ACTIVE` environment variable to activate a specific profile when running on Cloud Foundry
+[source,properties]
+----
+include::{code-root}portable/manifest.yml[]
+----
+
+From there, you need only run `cf push` to get the application to behave correctly in Cloud Foundry and you can as easily run the application locally, too.
+
 
 ### CloudFoundry is an Open PaaS
 Applications that run on Cloud Foundry are, of course, not required to stay on Cloud Foundry. You might start your application on Pivotal's hosted, public, Cloud Foundry-based Pivotal Web Services, then decide to move things in-house on your own Cloud Foundry installation using Pivotal Cloud Foundry. Don't want to use either? Use any of the many Cloud Foundry-based services and products provided by ecosystem partners, like IBM's BlueMix. And, assuming you've exposed service configuratino as environment variables, there's no reason you couldn't run the application unchanged on another PaaS altogether.
 
 
-
-// portable (env vars, written to a higher level stack like posix, cf, etc., uses common open technologies wherever possible)
-
-
-## A Pivotal Microservice is Configurable
-The {12f}/config[12 Factor applications guidance on configuration] suggests that things that may change between deploys (staging, productino, developer environments, etc.) should be externalzed from the application. Let's distinguish the two types of configuration: application internal configuration and external configuration. Application internal configuration - such as the wiring of the components in the application and the
-
-### look at how Spring Boot normalizes configuration (env, --D, application.(yml,properties), etc.)
-### Spring Cloud config-service.
-### Spring Cloud refreshable configuration
-### CF env vars
-### CF manifests
 
 
 ## A Pivotal Microservice is Resilient to Failure

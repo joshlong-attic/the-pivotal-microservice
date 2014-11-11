@@ -24,6 +24,7 @@
         <module>docs</module>
         <module>hello-world</module>
         <module>portable</module>
+        <module>configuration</module>
     </modules>
 
 </project>

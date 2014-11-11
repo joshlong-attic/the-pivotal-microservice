@@ -21,7 +21,7 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>demo.Application</start-class>
+        <start-class>normalized.Application</start-class>
         <java.version>1.8</java.version>
     </properties>
     <build>

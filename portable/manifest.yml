@@ -9,6 +9,5 @@ applications:
   services:
     - pivotal-ms-pgsql
   env:
-    SPRING_PROFILES_ACTIVE: prod
-    DEBUG: "true"
     debug: "true"
+    SPRING_PROFILES_ACTIVE: cloud
