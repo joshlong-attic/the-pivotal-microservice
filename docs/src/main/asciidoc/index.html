@@ -41,7 +41,7 @@
 <ul class="sectlevel2">
 <li><a href="#_externalized_application_configuration">3.1. Externalized Application Configuration</a></li>
 <li><a href="#_cloud_foundry_environment_variables">3.2. Cloud Foundry environment variables</a></li>
-<li><a href="#_spring_cloud_config_service">3.3. Spring Cloud config-service.</a></li>
+<li><a href="#_the_spring_cloud_configuration_server">3.3. The Spring Cloud Configuration Server</a></li>
 <li><a href="#_spring_cloud_refreshable_configuration">3.4. Spring Cloud refreshable configuration</a></li>
 </ul>
 </li>
@@ -378,7 +378,7 @@ public class Application {
 </div>
 </div>
 <div class="paragraph">
-<p>You could also dereference   other environment values, like this:</p>
+<p>You could also dereference other environment values, like this:</p>
 </div>
 <div class="listingblock">
 <div class="title">Aliasing the property <code>name</code> to the value of the environment variable <code>USER</code> in  <code>src/main/resources/application.properties</code></div>
@@ -513,7 +513,7 @@ public class Application {
 </table>
 </div>
 <div class="paragraph">
-<p>You may provide external configuration values for Cloud Foundry applications easily. Here is a Cloud Foundry <code>manifest.yml</code> for our application that - besides specifying which backing service our application should consume and how much system resources are needed to run it - specifies an environment variable - <code>NAME</code> - that overrides the <code>name</code> attribute.</p>
+<p>You may provide external configuration values for Cloud Foundry applications easily. Here is a Cloud Foundry <code>manifest.yml</code> for our application that - besides specifying which backing service our application should consume and how much system resources are needed to run it - specifies an environment variable (<code>NAME</code>) that overrides the <code>name</code> attribute.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -542,9 +542,127 @@ applications:
 </div>
 </div>
 <div class="sect2">
-<h3 id="_spring_cloud_config_service">3.3. Spring Cloud config-service.</h3>
+<h3 id="_the_spring_cloud_configuration_server">3.3. The Spring Cloud Configuration Server</h3>
 <div class="paragraph">
-<p>Thus far we&#8217;ve focused on the single-service case. Each of these services - insignficant though they are  - were configured one node at a time. Spring Cloud provides a configuration server that can act as a proxy to centrally managed, versioned configuration on a Git repository. Let&#8217;s look at a simple example of a service that draws its configuration from the configuration service.</p>
+<p>Thus far we&#8217;ve focused on the single-service case. Spring&#8217;s configuration support works well here.</p>
+</div>
+<div class="paragraph">
+<p>There are some drawbacks. Configuration updates require server pushes to change the configuration. There is no mechanism to support runtime configuration. In a production environment, it is important to be able to trace, or correllate, behavior at runtime to the configuration changes that preceded them. Configuration is, ideally, journaled; it should be easy to version and rollback configuration. Configuration  should be centralized, so that a change in one place can affect changes in multiple services in a repeatable way.</p>
+</div>
+<div class="paragraph">
+<p>Spring Cloud provides a configuration server.  It makes available to other services the configuration that it reads (and proxies, in a way) from a Git repository. Git, naturally, is very capable of journaling configuration. Another service may act as a client to the configuration server.</p>
+</div>
+<div class="paragraph">
+<p>Setting up the configuration server is easy.</p>
+</div>
+<div class="listingblock">
+<div class="title">Standing up the configuration server is as easy as adding <code>@EnableConfigServer</code> on an otherwise basic Spring Boot application.</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package configuration.server;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableAutoConfiguration
+@EnableConfigServer
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">The configuration server needs to know what server it&#8217;s talking to. It expects you to define an attribute - <code>spring.cloud.config.server.uri</code> - that points to a Git repository. In this case, the repository lives on my <code>Desktop</code> but could just as easily live in GitHub or anywhere else. If you&#8217;re referencing GitHub, just provide the repository page URI itself.</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">CONFIG_GIT_REPOSITORY=${user.home}/Desktop/conf
+spring.cloud.config.server.uri=${CONFIG_GIT_REPOSITORY:https://github.com/joshlong/spring-doge-microservice-configuration}
+server.port=8888</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The rules are simple. The configuration server will make all configuration in the Git repository available to configuration server clients. Each configuration server client looks at the <code>spring.application.name</code> attribute (typically found in a file named <code>bootstrap.properties</code> or <code>bootstrap.yml</code>) and will get the configuration specific to that application. Thus, if a configuration client&#8217;s <code>spring.application.name</code> is <code>config-client</code>, then the configuration server will return any configuration in <code>config-client.yml</code>, or <code>config-client.properties</code>, and of course the usual suspects (<code>application.properties</code> or <code>application.yml</code>, etc.).</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at a trivial  client.  This client defines an object -<code>NameHolder</code> - that requires a configuration value - <code>name</code> - from the configuration server.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">package configuration.client;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration
+@RestController
+public class Application {
+
+    @Bean
+    @RefreshScope
+    NameHolder nameHolder(@Value("${name:World}") String name) {
+        return new NameHolder(name);
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+class NameHolder {
+
+    private String name;
+
+    public NameHolder(String name) {
+        this.name = name;
+        System.out.println("creating a new Name Holder for the value '" + this.name + "'");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+}
+@RestController
+class NameRestController {
+
+    @Autowired
+    private NameHolder nameHolder;
+
+    @RequestMapping("/hi")
+    String hi() {
+        return "Hello, " + this.nameHolder.getName() + "!";
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The client resolves which configuration to load from the configuration server in <code>bootstrap.properties</code> or <code>bootstrap.yml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">spring.application.name=config-client
+spring.cloud.config.uri=http://localhost:8888</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A service can force a refresh of the configuration it gets from the configuration server. In this way, each service <em>pulls</em> configuration.</p>
+</div>
+<div class="paragraph">
+<p>If you want to <em>push</em> configuration, it&#8217;s a snap to tie other services to the Spring Cloud event bus which uses RabbitMQ as its messaging fabric.
+This setup sidesteps the need for the configuration serice to maintain  a list of hosts and ports to which configuration changes should be pushed. This quality is particularly valuable in a cloud environment where hosts and ports are ephemeral.</p>
 </div>
 </div>
 <div class="sect2">
@@ -789,7 +907,7 @@ applications:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-11-11 00:33:28 PST
+Last updated 2014-11-12 22:40:02 PST
 </div>
 </div>
 </body>

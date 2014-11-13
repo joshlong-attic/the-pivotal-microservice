@@ -145,7 +145,7 @@ Spring Boot makes short work of reading and working with hierarchical YAML and s
 name=Spring Users
 -----
 
-You could also dereference   other environment values, like this:
+You could also dereference other environment values, like this:
 
 .Aliasing the property `name` to the value of the environment variable `USER` in  `src/main/resources/application.properties`
 [source,properties]
@@ -182,7 +182,7 @@ include::{code-root}configuration/cloud-configuration/src/main/java/configuratio
 <5> When this application is started, Spring Boot will make sure that all beans of type `CommandLineRunner` are given a callback. In this case, all records from the database will be returned and written to `stdout`.
 <6> This prints the environment value of the `name` property which, if unspecified, would default to `World`.
 
-You may provide external configuration values for Cloud Foundry applications easily. Here is a Cloud Foundry `manifest.yml` for our application that - besides specifying which backing service our application should consume and how much system resources are needed to run it - specifies an environment variable - `NAME` - that overrides the `name` attribute.
+You may provide external configuration values for Cloud Foundry applications easily. Here is a Cloud Foundry `manifest.yml` for our application that - besides specifying which backing service our application should consume and how much system resources are needed to run it - specifies an environment variable (`NAME`) that overrides the `name` attribute.
 
 [source,yml]
 ----
@@ -192,22 +192,49 @@ include::{code-root}configuration/cloud-configuration/manifest.yml[]
 <1> In this example, we define extra environment variables. One is `DEBUG`, which Spring Boot will see and turn on various debug-specific features: it will print out all the auto-configurations that matched, turn on reloadable templates, and more. The next environment variable is simply a definition of the variable `NAME` which we saw earlier. Here, Spring Boot will print out `Hello, Cloud!` on the console instead of the default value `World`. You can see this output by running `cf logs cloud-configuration --recent`.
 
 
-### Spring Cloud config-service.
+### The Spring Cloud Configuration Server
 Thus far we've focused on the single-service case. Spring's configuration support works well here.
 
-There are some drawbacks. Configuration updates require server pushes to change the configuration. There is no mechanism to support runtime configuration. In a production environment, it is important to be able to trace, or correllate, behavior at runtime to the configuration changes that preceded them. Configuration is, ideally, journaled; it should be easy to version and rollback configuration. Confiuration  is decentralized, and requires a way to propagate changes to all running instances of the application.
+There are some drawbacks. Configuration updates require server pushes to change the configuration. There is no mechanism to support runtime configuration. In a production environment, it is important to be able to trace, or correllate, behavior at runtime to the configuration changes that preceded them. Configuration is, ideally, journaled; it should be easy to version and rollback configuration. Configuration  should be centralized, so that a change in one place can affect changes in multiple services in a repeatable way.
 
-* given that property changes are sometimes applied at runtime (in response to changing circumstances in the system or otherwise), there need
-* a push method of updating properties could not be employed as this system would need to know all the server instances to push the configuration to at any given point in time; the list of hostnames and property locations. Of course this is possible in a static data-center, but  in the cloud where instances are ephemeral and their hostnames and IPs change, it proves inflexible.
-* given that property changes had to be applied at run time, it was clear that the codebase had to use a common mechanism which allowed it to consume properties in a uniform manner, from different sources (both static and dynamic).
-* there was a need to have different properties for different applications and services under different contexts. See the section "Netflix Deployment Overview" for an overview of services and context.
-* property changes needed to be journaled. This allowed us to correlate any issues in production to a corresponding run time property change.
-* Properties had to be applied based on the Context. i.e. The property had to be multi dimensional. At Netflix, the context was based on "dimensions" such as Environment (development, test, production), Deployed Region (us-east-1, us-west-1 etc.), "Stack" (a concept in which each app and the services in its dependency graph were isolated for a specific purpose; e.g. "iPhone App launch Stack") etc.
+Spring Cloud provides a configuration server.  It makes available to other services the configuration that it reads (and proxies, in a way) from a Git repository. Git, naturally, is very capable of journaling configuration. Another service may act as a client to the configuration server.
+
+Setting up the configuration server is easy.
+
+.Standing up the configuration server is as easy as adding `@EnableConfigServer` on an otherwise basic Spring Boot application.
+[source,java]
+----
+include::{code-root}configuration/config-server/src/main/java/configuration/server/Application.java[]
+----
+
+.The configuration server needs to know what server it's talking to. It expects you to define an attribute - `spring.cloud.config.server.uri` - that points to a Git repository. In this case, the repository lives on my `Desktop` but could just as easily live in GitHub or anywhere else. If you're referencing GitHub, just provide the repository page URI itself.
+[source,properties]
+----
+include::{code-root}configuration/config-server/src/main/resources/application.properties[]
+----
+
+The rules are simple. The configuration server will make all configuration in the Git repository available to configuration server clients. Each configuration server client looks at the `spring.application.name` attribute (typically found in a file named `bootstrap.properties` or `bootstrap.yml`) and will get the configuration specific to that application. Thus, if a configuration client's `spring.application.name` is `config-client`, then the configuration server will return any configuration in `config-client.yml`, or `config-client.properties`, and of course the usual suspects (`application.properties` or `application.yml`, etc.).
+
+Let's look at a trivial  client.  This client defines an object -`NameHolder` - that requires a configuration value - `name` - from the configuration server.
+
+[source,java]
+----
+include::{code-root}configuration/config-client/src/main/java/configuration/client/Application.java[]
+----
+
+The client resolves which configuration to load from the configuration server in `bootstrap.properties` or `bootstrap.yml`.
+
+[source,properties]
+----
+include::{code-root}configuration/config-client/src/main/resources/bootstrap.properties[]
+----
 
 
+A service can force a refresh of the configuration it gets from the configuration server. In this way, each service _pulls_ configuration.
 
-In a more production-centric system, however, configuration is often centralized and then proxied to all the  Spring Cloud provides a configuration server that can act as a proxy to centrally managed, versioned configuration on a Git repository. Let's look at a simple example of a service that draws its configuration from the configuration service.
 
+If you want to _push_ configuration, it's a snap to tie other services to the Spring Cloud event bus which uses RabbitMQ as its messaging fabric.
+This setup sidesteps the need for the configuration serice to maintain  a list of hosts and ports to which configuration changes should be pushed. This quality is particularly valuable in a cloud environment where hosts and ports are ephemeral.
 
 ### Spring Cloud refreshable configuration
 

@@ -8,7 +8,7 @@ guard 'shell' do
 
 
 
-		Asciidoctor.render_file(  'src/main/asciidoc/index.adoc' ,
+		Asciidoctor.render_file(  'src/main/asciidoc/blog.adoc' ,
 			:in_place => true, \
 			:safe => Asciidoctor::SafeMode::UNSAFE, \
 			:attributes=> { \

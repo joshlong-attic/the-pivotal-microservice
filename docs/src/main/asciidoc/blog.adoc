@@ -1,0 +1,179 @@
+# The Pivotal Microservice
+Josh Long
+//:doctype: book
+:boot-version: 1.1.8.RELEASE
+:numbered: false
+:CF:  Cloud Foundry
+:toc: left
+:toclevels: 4
+:source-highlighter: prettify
+:images:
+:code-root: ../../../../
+:spring-cloud-uri: http://spring.io/projects/spring-cloud
+:snippets-root: snippets
+:12f: http://12factor.net
+
+At Pivotal, we're building the best platform for today's workloads. One architecture style in particular - _microservices_ - seems to best capture what is typical, and best, in a lot of the applications we've seen deployed on our platform and with our technology.
+
+Though our company is new (launched April 2013), we owe our rich heritage to the foundational groups and technologies (Spring, Cloud Foundry, Pivotal Labs, RabbitMQ, Redis, our Apache Tomcat leadership, Greenplum, Gemfire, our Groovy-language leadership, etc.) that launched Pivotal. All of these technologies followed their own trajectories to arrive here, at a time where our customers are building radically different applications  than those of even 10 years ago.
+
+## How Did We Get Here?
+### Scale
+The need for scale has changed the dynamics and economics of a modern applications and application architectures. We all know that Moore's law - named for Intel founder Gordon Moore - has not really been a law since the early 2000s when it became more cost effective to add more CPUs than to scale an individual CPU on a chip. To do more, applications would need to become more concurrent, to scale out. CSC claims that data-production will be 44000% larger in 2020 than 2009.
+
+**Mobile technology** brought computers home. Many developing nations skipped terrestrial  telephony infrastructure altogether and instead went straight to mobile devices. When the era of the smart phone began in earnest with the iPhone (and Android soon thereafter), much of the world - not just the superpowers that had more ubiquitous access to computing infrastructure - ushered it in. This created a net-centric platform with access to untold millions (and billions) more that simply didn't exist before. Google's Larry Page said in 2012 that  http://www.androidcentral.com/larry-page-15-million-android-devices-activated-every-day[Google was seeing 15 million new Android devices activated] _every day_! iPhone activations tend to trend much further behind, but represent  a staggering amount in any event, and taken together they represent a platform (and market opportunity) that modern application developers would be foolish to ignore.
+
+The **Internet-of-Things** is the logical extension of this growth. It is the idea that computing is immersive and pervasive - a part of the everyday experience. We're already seeing it. The roads in Singapore, a small city-state in Asia, are connected via censors to a smart grid that helps operators understand (and optimize for) traffic patterns. You can buy refridgerators that are connected to the internet and that buy and sell their own power on the commodities markets!  The United Nations claims that by 2018, Earth will be home to 7.6 billion people and - by contrast - http://www.businessinsider.com/what-you-need-to-know-about-the-internet-of-things-2013-3?op=1#ixzz3FxCafwWe[there will be some 25 billion connected devices by 2015, and 50 billion by 2020, says Cisco, a maker of networking devices]. Of course, NATS and IPv6 are reactions to this growth. After all, if you beleive Cisco, there'll be an average of more than 3 connected devices per person by 2015. This trend seems likely to increase with wearable computing (Google Glass, Apple iWatch, etc.), too. I won't even tell you how many devices I have on my person on a given day!
+
+**Social platforms** have also driven scale. The diagram below (from 2012) gives a good perspective on the insane scale of most social platforms, like Facebook. Empires (anybody remember Farmville?) have been built and destroyed on the strength of piggybacking on these social platforms alone.
+
+.A connected world in 60 seconds
+image::{images}connected-world-in-60-s.png[]
+
+
+### Agility
+It's hard to know whether scale begat agility, or the other way around! Either way,  the marketplace _pivots_ (pardon me) on a dime today and applications must keep up. Cloud computing makes it easy for companies (like SalesForce, or Zynga) to deliver _seasonal_ iterations on their flagship software-as-a-service offerings. Millionairre-making  applications on the Apple App Store or the Google Play Store often have a lifetime of weeks (or days!), not longer. In more stalwart organizations, we've seen departmental initaitves do end-runs around traditional IT and take advantage of self-service cloud computing technologies. Need to deploy an application that lives and dies as part of a marketing initiative? Something that's designed solely to support adhoc responses to emergencies? _Agility_ is as much about getting shippable code at launch as in subequent iteration.
+
+### Prometheus's Microservice
+
+It's not hard to see why a cloud-computing centric, horizontally scalable, agile approach to developing applications  like microservices would take hold against the backdrop of all these drivers! If anything, you might wonder why it's taken this long! It's hard to point to any one thing, but here's my _$0.02_: it _hasn't_. You see, microservices aren't all that new - the really big players (Alibaba, Baidu, Facebook, Amazon, Twitter, eBay, Google, Yahoo!, LinkedIn, Netflix, etc.) have all discovered or built the constituent parts to microservices by themselves. They had to, in order to survive and succeed. When you think of microservices, think of a set of patterns and practices  that fall out of building modern, distributed systems.
+
+Enough organizations had to _discover_ these patterns before we - as a community - could distill them  and describe them. Many of these organizations have also open-sourced some of their work - or at least their ideas,   in the form of whitepapers. Where there was no credible (ideally open-source) solution, Pivotal has  filled in the gaps. If you take all these approaches and implementations together, you get what we think is the best microservice platform and stack out there. Let's take a look at what makes a  _Pivotal microservice_.
+
+
+
+
+## A Pivotal Microservice is Agile
+
+Today's applications need to be _agile_. As the markets move quickly, so too must boardroom direction translate into value in production. It's almost cliche /* TODO get accent for cliche*/ to bandy around the term _agile_ today, but that's because the alternative is almost unthinkable! I assure you, the likes of Twitter, Netflix, and Google are *not* using _waterfall_! An agile process informs technology because agile organizations must build code that is shippable, and code that can be developed in an iterable way.
+
+Adrian Cochroft /*TODO (sp and former title at Netflix?) */ described microservices as "SOA with a bounded context."  Microservices should be as tiny and focused as makes business sense. Common sense applies. If a service might pose different scaling characteristics than the rest of the system and being able to independantly scale it would be helpful, consider factoring it out. If a service is evolved and extended at a different release cadence than the rest of the system, consider factoring it out. If a service is fundamentally better expressed using a different technology stack (and it is worth the network hop latency incurred to do so), consider factoring it out. I tend to approach service design in the same way that I approach object-oriented design: are there too many proverbial cooks in the kitchen? If so, factor the services out.
+
+This architecture is reminiscent of the UNIX pipes 'n filters model  where singly-focused command line utilities like `cat`, `grep`, `find`, etc. can be composed into more useful chains of commands to deliver results. These command line utilities (the _filters_) communicate with each other using `stdin` and `stdout` (the _pipes_).
+
+TIP: My pal Chris Richardson introduced me to some talks by Fred George wherein he describes his (.NET-centric) team's attempts to come to grips with microservices. His team ultimately decided, as rough guidance, that a microservice should be about 100 lines of code. His observation was that a service so small had some key benefits that encouraged agility. They're easy to throw away if there's a superior approach, easy to understand for newcomers, easy to test, easy to churn out, etc. I'm not sure if we should care all that much how _micro_ a microservice is. Instead, prefer services that are _singly focused_ or _bounded_. This encourages proper abstraction encapsulation, and yeilds most of the same benefits. A service of that size is small enough that it doesn't matter what language or framework is used. After all, if it's decided at a later date to introduce new features, or to change the service, then it should be straightforward for anybody to understand what's going on. If the person assuming maintenance of that service is unfamiliar with the language or framework in which it's implemented, it's trivial to reimplement it. After all, it's just 100 lines of code, or so. A service that small, he observes, is so small that there's no risk in scrapping them and starting anew.
+
+http://spring.io/projects/spring-boot[Spring Boot] is a marvelous choice for building microservices, quickly. Start at the http://start.spring.io[_Spring Initializr_] and then tick the boxes you want to get started with. For starters, I'd check _Web_, some sort of data persistence technology like _Mongo DB_ or _JPA_ and _Actuator_. Spring Boot is  a powerful way to do just about anything. If you want to dive further into some of its other capabilities, check out the http://spring.io/guides[guides].
+
+
+As anyone whose read Michael Nygard's epic tome http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213[_Release It!_] knows, being code-complete is _not_ the same as being production-ready. Spring Boot provides the _actuator_ module which installs useful endpoints that expose information about the application.  The actuator module installs endpoints over REST and JMX, for example. You might for example connect the `/health` endpoint - which gives you information about the health of the application - to your router and monitoring tools. You might use `/trace` to understand the traffic hitting the application. You might use `/env` to see the running service's environment - its environment variables, its system properties, etc.
+
+While it's easy enough to get a Spring Boot application up and running given a Java virtual machine, the devil, as they say, is often in the details. Taking this application to production involves describing which backing services (databases, message queues, etc.) are required (and where they live), how much RAM and other system resources it needs, on what host it should be exposed over, how many instances should run for capacity, and much more.
+
+Fortunately, modern Platform-as-a-Service options like http://cloudfoundry.org[Cloud Foundry] make describing these things - and more -  trivial. Cloud Foundry is an open-source Apache 2 licensed project that Pivotal makes available through a hosted service  as  http://run.pivotal.io[Pivotal Web Services] and that Pivotal also sells as http://www.pivotal.io/platform-as-a-service/pivotal-cf[an on-premise PaaS offering called Pivotal Cloud Foundry].
+
+Cloud Foundry applications can be configured through the `cf` CLI or through a `manfiest.yml` file that typically lives in the root of the deployed application. Here is a trivial `manfifest.yml` for the simple Spring Boot service we just created.
+
+
+
+.This `manifest.yml` tells the PaaS what we need to run this application; how much RAM, which binary to run, which backing-services to run (though we've specified none here), the URI
+[source,java]
+----
+include::{code-root}hello-world/manifest.yml[]
+----
+
+Moving the application to production is now as simple as `cf push` in the directory where the `manifest.yml` file lives.
+
+
+## A Pivotal Microservice is Configurable
+
+Let's distinguish the two types of configuration: application internal configuration and external configuration. Application internal configuration - such as the wiring of the components in the application - and external configuration - things that change from one environmnet to another.
+
+Spring applications are _configured_ in that they're a grouing of objects (_beans_) wired together to build an application. This configuration is internal, and belongs in the Java language or XML configuration formats natively supported by Spring. Ideally, you'll need to perform very little of this and instead lean on the defaults provided by Spring Boot's _auto configuration_.
+
+
+For external configuration _values_ - such as database authentication information  - use Spring's property placeholder resolution. The {12f}/config[12 Factor applications guidance on configuration] suggests that things that may change between deploys (such as as database authentication information between different deployment environments like _staging_, _production_, and a given user's _developer environment_) should be externalzed from the application.  Spring natively works with configuration values. It supports an `Environment` abstraction that reads property keys and values from numerous sources. As a running Spring Boot application you can read from this environment in many ways. In the example below, we demonstrate a few different ways to access values from the environment in Spring.
+
+Spring Boot makes short work of reading and working with hierarchical YAML and standard `.properties`-file based property definitions. For example, you could define a file `configuration/external-configuration/src/main/resources/application.properties` file. It also reads operating system process environment  variables and `-D` arguments passed to the Java process and makes them available as keys that can be read inside a Spring application. All external configuration is normalized and then easy to read.
+
+Spring Boot responds to numerous well-known properties as well. For example, if you're uising the default embedded container support (as we are in this example) then you can specify on which port the application should listen using the `server.port` property. If you specify a value of `0`, Spring Boot will attempt to pick a port for you. To see what other properties Spring Boot will respond to given the libraries on the `CLASSPATH`, add the `org.springframework.boot:spring-boot-starter-actuator:{boot-version}` dependency to your CLASSPATH and then visit `/configprops`.
+
+http://cloudfoundry.org[Cloud Foundry] externalizes all environment-specific configuration using environment variables  that Cloud Foundry makes available for every process. This is very much in keeping with the  {12f}/config[12 Factor applications guidance on configuration]. It's wise not to count on these values remaining static. Don't cache them. If your application is restarted, or the server on which it is running  goes  down, Cloud Foundry will start the application on another node and the information may change. Ditto for the backing service authentication information. So, instead, prefer to consume these values through the environment and re-establish connections on application restart.
+
+You may provide external configuration values for Cloud Foundry applications easily by specifying environment variables in a `manifest.yml` or via the `cf` CLI.
+
+So far, we've talked about configuring a single application or service. There are some drawbacks. Configuration updates require server pushes to change the configuration. There is no mechanism to support runtime configuration. In a production environment, it is important to be able to trace, or correllate, behavior at runtime to the configuration changes that preceded them. Configuration is, ideally, journaled; it should be easy to version and rollback configuration. Configuration  should be centralized, so that a change in one place can affect changes in multiple services in a repeatable way.
+
+{spring-cloud-uri}[Spring Cloud] provides https://github.com/spring-cloud/spring-cloud-config[a configuration server]. It makes available to other services the configuration that it reads (and proxies, in a way) from a http://git-scm.com/video/what-is-git[Git repository]. Git, naturally, is very capable of journaling configuration. Another service may act as a client to the configuration server.
+
+A service can force a refresh of the configuration it gets from the configuration server. In this way, each service _pulls_ configuration. If you want to _push_ configuration, it's a snap to tie other services to the {spring-cloud-uri}[Spring Cloud event bus] which uses  http://rabbitmq.org[RabbitMQ] as its messaging fabric. This setup sidesteps the need for the configuration serice to maintain  a list of hosts and ports to which configuration changes should be pushed. This quality is particularly valuable in a cloud  environment (like Cloud Foundry, but also any other as well) where hosts and ports are ephemeral.
+
+
+
+// ----------------------------------------------------------
+## A Pivotal Microservice is Portable
+
+A microservice should  be _portable_. Portability affects various layers of the microservice.  A microservice should ideally run on both a developer's local machine _and_ the production environment with a minimum of (ideally, external configuration-only) changes. This point is really well articulated in the  {12f}/dev-prod-parity[12-Factor manifesto's page on development and production parity]. An application with few-to-no gaps between development and production can be continuously deployed with more confidence. This is part of the _agile_ nature of a Pivotal microservice.
+
+Open services like http://www.postgresql.org/[PostgreSQL], http://mongodb.org[MongoDB], http://redis.io[Redis], http://hadoop.apache.org[Hadoop]. The first, implied point here is that you should not use services that don't exist in both your local developer environment or your productione environment. An application written for  Cloud Foundry takes advantage of open, commodity backing services like http://postgresql.org[PostgreSQL], http://rabbitmq.org[RabbitMQ], and http://redis.io[Redis] so that developers can acheive parity  in local, staging and production environments without being tied to proprietary APIs like Amazon's SQS or Google App Engine's task queue.
+
+Spring's https://spring.io/blog/2011/02/15/spring-3-1-m1-unified-property-management/[`Environment`] abstraction - which we've already seen in action when asking questions of the application's environment - can also be partitioned along _profiles_. A It's easiest to think of a profile as a sort of label, or tag, that marks one bean, or configuration value, as belonging to a specific environment. You can _activate_ profiles readily. The easiest way is to define an environment variable, `SPRING_PROFILES_ACTIVE`, and set as its value one or more comma-delimited profile names, like: `cloud`. If you partition values appropriately and then activate appropriately, you can toggle different configuration sets.
+
+Let's revisit our simple example from before. This time, we'll rework it ever so slightly so that there's a bit of indirection in specifying profiles. As such, this code will run perfectly on both our _local_ environment (or, rather, the `default` profile which is the active environment we get absent any specific profile) and in the cloud (Cloud Foundry).
+
+You might for example define a set of configration values for  different environments. By default, Spring Boot will load configuration property files  of the form `application.properties` or `application.yml`. If there is an `application-PROFILE.properties` file, where `PROFILE` is the name of the active `profile`, Spring Boot will load the more specific configuration file, too. You can easily specify that your application should honor a specific profile by specifying the active profile using the well-known environment variable, `SPRING_ACTIVE_PROFILE`, be it through the `cf` CLI or a Cloud Foundry `manifest.yml`. With these changes in place, you need only run `cf push` to get the application to behave correctly in Cloud Foundry  and any number of other environments.
+
+## A Pivotal Microservice is Resilient to Failure
+Failuires occur for lots of reasons. There are well known things you can do to prevent failure, and of course Spring - because it is such a notoriously high quality and feature-rich framework - is chock full of things that encourage clean architecture. It encourages unit testing and makes it very easy to trap problems in the code upfront.
+
+The real test, however, is how well an application responds to failure. Not all failure can be avoided. Design accordingly.
+
+An operations-ready platform, like Cloud Foundry, can do a lot to keep your application up even in the face of failure. If an application fails Cloud Foundry will restart it. You can reduce or remove downtime by scaling applications out. Cloud Foundry https://www.youtube.com/watch?v=1OkmVTFhfLY[even does some basic forms of auto-scaling for applications]! Cloud Foundry has mechanisms to self-heal in the event something should go wrong; it's _eventually consistent_. Microservices are said to be a cloud-native architecture because they often are built to embrace the dynamic nature of a PaaS. In this environment, file system access is ephemeral, and one shouldn't make promises about things like the node on which a service runs. The PaaS may shuffle a lot of that aroun as it needs to. A good, cloud-native application will build for that, making sure to not rely on long-running state, to be fast to bootup and shut-down, etc.
+
+Logs should be front-and-center in a production-ready system.   http://docs.pivotal.io/pivotalcf/devguide/deploy-apps/streaming-logs.html[Loggregator], the Cloud Foundry component responsible for logging, provides a stream of log output from your application and from Cloud Foundry system components that interact with your app during updates and execution.
+
+By default, Loggregator streams logs to your terminal. If you want to persist more than the limited amount of logging information that Loggregator can buffer, you can easily drain http://docs.pivotal.io/pivotalcf/devguide/services/log-management-thirdparty-svc.html[logs to a third-party log management service like Splunk Storm, SumoLogic, PaperTrails, etc]. If you want even _more_ insight (complete with visualizations and performance insight) into the state of your applications, you can plugin monitoring solutions like http://blog.newrelic.com/2014/10/27/cloud-foundry-java-buildpack-new-relic-2/[New Relic] and  http://blog.cloudfoundry.org/2014/02/04/monitoring-java-apps-appdynamics/[AppDynamics].
+
+With Spring, it's easy to build fault-tolerant systems. By fault-tolerant, we most often mean resilient to component failure. There are many ways to acheive this.
+
+One approach is to use store-and-forward messaging to communicate between components. http://rabbitmq.org[*RabbitMQ*] is an  world class, open-source, AMQP and STOMP-enabled  message queue that provides full HA support, transactions and journaling, incredible performance, and much more.  Pivotal is the main sponsor for  the RabbitMQ project, the leading AMQP broker in the industry.
+
+TIP: http://www.amqp.org/[AMQP] is a wire protocol, not an API, so it can be used in any of dozens of different language bindings. This is worth noting because there is, after all, nothing about microservices that requires services be implemented in the same language and technology stack. Cloud Foundry is a polyglot, open PaaS, and can  manage  long-running processes and one-off tasks, in any language, deployment model, etc.
+
+RabbitMQ is a fine choice, but it does introduce middleware that may not always be required. For lighterweight, inter-process coordination, https://github.com/reactor/[*the Reactor project*] provides a very capable alternative. It's an implementation of the LMAX disruptor-based http://c.learncodethehardway.org/book/ex44.html[ring-buffer] datastructure. It's optimized for _extremely_ high concurrency. It can handle millions of message dispatches per second on a single laptop. Reactor will provide http://www.slideshare.net/rolandkuhn/reactive-streams[_back-pressure_] that  buffers incoming requests, entirely transparently to the developer. This ensures that components aren't overwhelmed.
+
+
+
+
+http://spring.io/projects/spring-integration[*Spring Integration*] is an implementation of the enterprise application integration patterns. It makes it dead simple to build complex, event-based integration flows. RabbitMQ messages are but one of the numerous ways to string together components  in complex Spring Integration flows. Spring Integration can also talk to MQTT, Kafka, JMS, Redis and GemFire   `java.util.Queue<T>` s, Twitter, IMAP, file systems, (S)FTP(s), and _much more_. There's no reason a microservice needs to be exposed through REST. Use the best protocol for the job. Spring Integration flows are easily designed to be decoupled to the underlying subsystems and middleware.
+
+Components need to be isolated from each other. If one component starts making dubious calls to another system because of some error condition, it risks bringing down both components. https://github.com/Netflix/eureka/wiki/Eureka-at-a-glance[Spring Cloud provides an integration with **Netflix's Eureka service registry**]. The service registry makes it easy for components to decouple themselves from the whereabouts of a given service. It introduces a bit of indirection letting the client ask questions like _is this service available?_ This makes it easy to provide a degraded experience: perhaps part of the system is down but the components proceed, aware of the absence, without the service.
+
+Spring Cloud provides support for the https://github.com/Netflix/Hystrix[Netflix Hystrix library]. Hystrix provides implementations of various http://techblog.netflix.com/2012/11/hystrix.html[_reliability patterns_]. One such pattern is the http://en.wikipedia.org/wiki/Circuit_breaker_design_pattern[_circuit-breaker_]. A circuit breaker lets requests flow to an underlying component as long as nothing has gone wrong before. A service might attempt to call another web-service that doesn't exist, for example. If something goes wrong in an invocation, a circuit breaker catches the `Exception` and monitors subsequent access. If enough things continue to go wrong, the circuit is `broken` and subsequent accesses are either ignored or handled in a separate manner.
+
+You can monitor circuit-breakers across a system using the Hystrix Dashboard, which Spring Cloud readily supports, as well.
+
+.In this image, we see various circuit-breakers in the system with live feedback about their state.
+image::https://camo.githubusercontent.com/2642525509cd756cddc733e0124a65a8724e4187/68747470733a2f2f7261772e6769746875622e636f6d2f77696b692f4e6574666c69782f487973747269782f696d616765732f687973747269782d64617368626f6172642d73696e676c652d726f772e706e67[Sunset]
+
+
+
+## A Pivotal Microservice Should Play Well with Others
+### Spring Cloud Eureka to handle service discocery
+### using Spring Cloud SSO to secure service-to-service communication
+
+
+## A Pivotal Microservice is Data-Driven
+### XD makes crunching and managing data easy
+### built on the shoulders of Spring Batch & Integration
+### PHD & HAWK are awesome.
+
+##  A Pivotal Microservice is Scalable
+### Process -Centric Concurrency
+### Basic PCF Auto-Scaling
+### no Session State!
+//systems should not rely on the service or session state associate w/ that service being around later. file system state shoudl be transactional in nature only (e.g, upload and process a file, then write to a MongoDB or something, )
+// requires that applications behave accordingly: if u need HTTP session state, use Spring Session & Redis
+// RabbitMQ is a dumb pipe
+
+
+
+
+
+## Conclusion
+
+## Technology Glossary
+// todo: find an introduction video to each of these technologies to link to in this glossary!
+- http://redis.io[**Redis**] is an Apache 2 licensed distributed data-structure service that makes it a snap to get cluster-visible collections (like a `java.util.Map<K,V>` or a `java.util.Set<T>` or a `java.util.List<T`). It's commonly used for  caching, for example at Twitter.
+- http://rabbitmq.com[**RabbitMQ**] is an Apache 2 licensed message queue that implements the open AMQP protocol. AMQP was defined by a working group of banks that needed highly available messaging that worked language- and platform-agnostic way. Because it's open-source, it works well with other AMQP brokers, though you won't often need that support as RabbitMQ is very capable. It provides full HA support,  transactional message production and consumption, and more. It is the most ubiquitous message queue in the cloud, surpassing even Amazon's own SQS in AWS deployments. It is used, for example, for the highly available chat system that powers the Huffington Post, and to scale the Indian  national identity service  that serves India's 1.2 billion people.
+- http://cloudfoundry.org[**Cloud Foundry**] is an Apache 2 licensed Platform-as-a-Service that makes it easy to manage applications. It transparently provides services like routing, clustering, service-brokering, and scaling for the developer in a uniform way. It is used, for example, by Baidu, the world's 4th largest search engine (or 3rd, if you don't count Yahoo! which, after all, is powered by Bing these days).
