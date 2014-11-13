@@ -193,7 +193,20 @@ include::{code-root}configuration/cloud-configuration/manifest.yml[]
 
 
 ### Spring Cloud config-service.
-Thus far we've focused on the single-service case. Each of these services - insignficant though they are  - were configured one node at a time. Spring Cloud provides a configuration server that can act as a proxy to centrally managed, versioned configuration on a Git repository. Let's look at a simple example of a service that draws its configuration from the configuration service. 
+Thus far we've focused on the single-service case. Spring's configuration support works well here.
+
+There are some drawbacks. Configuration updates require server pushes to change the configuration. There is no mechanism to support runtime configuration. In a production environment, it is important to be able to trace, or correllate, behavior at runtime to the configuration changes that preceded them. Configuration is, ideally, journaled; it should be easy to version and rollback configuration. Confiuration  is decentralized, and requires a way to propagate changes to all running instances of the application.
+
+* given that property changes are sometimes applied at runtime (in response to changing circumstances in the system or otherwise), there need
+* a push method of updating properties could not be employed as this system would need to know all the server instances to push the configuration to at any given point in time; the list of hostnames and property locations. Of course this is possible in a static data-center, but  in the cloud where instances are ephemeral and their hostnames and IPs change, it proves inflexible.
+* given that property changes had to be applied at run time, it was clear that the codebase had to use a common mechanism which allowed it to consume properties in a uniform manner, from different sources (both static and dynamic).
+* there was a need to have different properties for different applications and services under different contexts. See the section "Netflix Deployment Overview" for an overview of services and context.
+* property changes needed to be journaled. This allowed us to correlate any issues in production to a corresponding run time property change.
+* Properties had to be applied based on the Context. i.e. The property had to be multi dimensional. At Netflix, the context was based on "dimensions" such as Environment (development, test, production), Deployed Region (us-east-1, us-west-1 etc.), "Stack" (a concept in which each app and the services in its dependency graph were isolated for a specific purpose; e.g. "iPhone App launch Stack") etc.
+
+
+
+In a more production-centric system, however, configuration is often centralized and then proxied to all the  Spring Cloud provides a configuration server that can act as a proxy to centrally managed, versioned configuration on a Git repository. Let's look at a simple example of a service that draws its configuration from the configuration service.
 
 
 ### Spring Cloud refreshable configuration
